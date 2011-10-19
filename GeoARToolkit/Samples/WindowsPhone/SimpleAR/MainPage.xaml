@@ -32,14 +32,14 @@
         </shell:ApplicationBar>
 	</phone:PhoneApplicationPage.ApplicationBar>
 
-    <Canvas x:Name="LayoutRoot">
-        <ARControls:ARDisplay x:Name="ARDisplay" Height="640" Width="480">
-            <ARControls:VideoPreview x:Name="VideoPreview" />
-            <ARControls:OverheadMap x:Name="OverheadMap" CredentialsProvider="{StaticResource BingCredentials}" />
-            <ARControls:WorldView x:Name="WorldView" />
-            <ARControls:HeadingIndicator x:Name="HeadingIndicator" />
-        </ARControls:ARDisplay>
-    </Canvas>
+    <Grid x:Name="LayoutRoot">
+		<ARControls:ARDisplay x:Name="ARDisplay" d:LayoutOverrides="Width">
+			<ARControls:VideoPreview x:Name="VideoPreview" />
+			<ARControls:OverheadMap x:Name="OverheadMap" CredentialsProvider="{StaticResource BingCredentials}" />
+			<ARControls:WorldView x:Name="WorldView" />
+			<ARControls:HeadingIndicator x:Name="HeadingIndicator" HorizontalAlignment="Center" VerticalAlignment="Center" />
+		</ARControls:ARDisplay>
+	</Grid>
 
     <!--Sample code showing usage of ApplicationBar-->
     <!--<phone:PhoneApplicationPage.ApplicationBar>

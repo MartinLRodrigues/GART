@@ -161,32 +161,19 @@ namespace GART.Controls
         #region Internal Methods
         private void CalculateItemLocations()
         {
+            // Create the settings instance
+            ItemCalculationSettings settings = new ItemCalculationSettings { View = this };
+
             // Loop through all the items
             for (int i = 0; i < ARItems.Count; i++)
             {
                 // Get the item
                 ARItem item = ARItems[i];
 
-                // NOTE: Right now we don't support 3D rendering in XNA and right now 
-                // ARDisplay assumes that the user is always standing at location 0,0,0. 
-                // When we add 3D rendering we will need to allow our position in 3D space 
-                // to change, which will cause the calculations below to change as well.
-
-                // Work based on calculation
-                switch (item.WorldCalculationMode)
+                // If a calculation exists, call it
+                if (item.WorldCalculation != null)
                 {
-                    case WorldCalculationMode.GeoRelativeToLocation:
-                        // Use the ARHelper to do the heavy lifting
-                        item.WorldLocation = ARHelper.DistanceBetween(this.Location, item.GeoLocation);
-                        break;
-
-                    case WorldCalculationMode.RelativeToLocation:
-                        // For now just update WorldLocation to be 
-                        // the same as RelativeLocation. When 3D is 
-                        // added we'll need to take into account the
-                        // users current location in 3D space.
-                        item.WorldLocation = item.RelativeLocation;
-                        break;
+                    item.WorldCalculation(settings, item);
                 }
             }
         }

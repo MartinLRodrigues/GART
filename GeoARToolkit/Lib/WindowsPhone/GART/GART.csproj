@@ -80,6 +80,7 @@
     <Compile Include="Data\ARValidators.cs" />
     <Compile Include="Data\ExpressionExtensions.cs" />
     <Compile Include="Data\GeoCodeCalc.cs" />
+    <Compile Include="Data\ItemCalculationSettings.cs" />
     <Compile Include="Data\ObservableObject.cs" />
     <Compile Include="UIHelper.cs" />
     <Compile Include="Controls\WorldView.cs" />

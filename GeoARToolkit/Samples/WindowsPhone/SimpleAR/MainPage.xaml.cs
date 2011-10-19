@@ -58,7 +58,6 @@ namespace SimpleAR
             {
                 Content = label,
                 GeoLocation = location,
-                WorldCalculationMode = WorldCalculationMode.GeoRelativeToLocation
             };
 
             ARDisplay.ARItems.Add(item);

@@ -57,12 +57,12 @@
         </shell:ApplicationBar>
     </phone:PhoneApplicationPage.ApplicationBar>
 
-    <Canvas x:Name="LayoutRoot">
-        <ARControls:ARDisplay x:Name="ARDisplay" Height="640" Width="480" LocationChanged="ARDisplay_LocationChanged">
-            <ARControls:VideoPreview x:Name="VideoPreview" />
-            <ARControls:OverheadMap x:Name="OverheadMap" CredentialsProvider="{StaticResource BingCredentials}" />
-            <ARControls:WorldView x:Name="WorldView" ItemTemplate="{StaticResource RestaurantItem}" />
-            <ARControls:HeadingIndicator x:Name="HeadingIndicator" />
-        </ARControls:ARDisplay>
-    </Canvas>
+    <Grid x:Name="LayoutRoot">
+		<ARControls:ARDisplay x:Name="ARDisplay" LocationChanged="ARDisplay_LocationChanged">
+			<ARControls:VideoPreview x:Name="VideoPreview" />
+			<ARControls:OverheadMap x:Name="OverheadMap" CredentialsProvider="{StaticResource BingCredentials}" />
+			<ARControls:WorldView x:Name="WorldView" ItemTemplate="{StaticResource RestaurantItem}" />
+			<ARControls:HeadingIndicator x:Name="HeadingIndicator" Width="300" Height="300" HorizontalAlignment="Center" VerticalAlignment="Center" />
+		</ARControls:ARDisplay>
+	</Grid>
 </phone:PhoneApplicationPage>

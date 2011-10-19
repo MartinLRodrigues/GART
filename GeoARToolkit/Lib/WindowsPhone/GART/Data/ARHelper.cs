@@ -33,26 +33,10 @@ using System.Windows.Media.Animation;
 using System.Windows.Shapes;
 using Microsoft.Xna.Framework;
 using System.Device.Location;
+using GART.Controls;
 
 namespace GART.Data
 {
-    #region Conversion Notes
-    /******************************************************************************
-     * http://geography.about.com/library/faq/blqzdistancedegree.htm
-     * 
-     * 
-     * Because the lines of latitude are parallel and evenly spaced, a degree of latitude represents a constant distance on the ground.
-     * Because the lines of longitude converge at the poles, a degree of longitude represents a varying distance on the ground, depending on the latitude.
-     * 
-     * Each degree of latitude is approximately 111.133km apart.
-     * A degree of longitude is widest at the equator at 111.321km and gradually shrinks to 0km at the poles.
-     * 
-     * Ignoring curvature of the earth and assuming a mean earth radius of 6371 km, the distance between 
-     * lines of longitude that are 1 degree apart = 6371 * 2 * pi /360 * cosine(latitude) in km. 
-     * 
-     *****************************************************************************/
-    #endregion // Conversion Notes 
-
     static public class ARHelper
     {
         #region Constants
@@ -78,18 +62,31 @@ namespace GART.Data
         /// </remarks>
         static public Vector3 DistanceBetween(GeoCoordinate a, GeoCoordinate b)
         {
-            // Determine the mid-point between our two latitudes
-            double midLatitude = (a.Latitude + b.Latitude) / 2;
+            // Use GeoCoordinate provided methods to calculate distance. Use 
+            // same longitude on both points to calculate latitude distance and 
+            // use same latitude on both points to calculate longitude distance.
+            float latitudeMeters = (float)a.GetDistanceTo(new GeoCoordinate(b.Latitude, a.Longitude));
+            float longitudeMeters = (float)a.GetDistanceTo(new GeoCoordinate(a.Latitude, b.Longitude));
 
-            // Determine how many meters there are between longitude lines at our mid-point
-            double longMetersAtMidpoint = EarthRadiusInMeters * 2 * (Math.PI / 360) * Math.Cos(midLatitude);
+            // Invert the distance sign if necessary to account for direction 
+            if (a.Latitude < b.Latitude)
+            {
+                latitudeMeters *= -1;
+            }
+            if (a.Longitude > b.Longitude)
+            {
+                longitudeMeters *= -1;
+            }
 
-            // Calculate latitude and longitude distance in meters
-            double latMeters = (a.Latitude - b.Latitude) * MetersPerLatitudeDegree;
-            double longMeters = (a.Longitude - b.Longitude) * longMetersAtMidpoint;
+            // Now calculate the altitude difference, but only if both sides of the equation have altitudes
+            float altitudeMeters = 0f;
+            if ((!a.Altitude.Equals(Double.NaN)) && (!b.Altitude.Equals(Double.NaN)))
+            {
+                altitudeMeters = (float)(b.Altitude - a.Altitude);
+            }
 
-            // Return in Vector3 format
-            return new Vector3(-(float)longMeters, 0f, (float)latMeters);
+            // Return the new point
+            return new Vector3(longitudeMeters, altitudeMeters, latitudeMeters);
         }
 
         /// <summary>
@@ -104,6 +101,43 @@ namespace GART.Data
         static public string ToWGS84String(this GeoCoordinate coordinate)
         {
             return string.Format("{0}, {1}", coordinate.Latitude, coordinate.Longitude);
+        }
+
+        /// <summary>
+        /// Calculates the virtual-world location based on the distance between the user and the geo location.
+        /// </summary>
+        /// <param name="settings">
+        /// The settings used to perform the calculation.
+        /// </param>
+        /// <param name="item">
+        /// The item to calculate and update.
+        /// </param>
+        static public void WorldFromGeoLocation(ItemCalculationSettings settings, ARItem item)
+        {
+            // NOTE: Right now we don't support 3D rendering in XNA and right now 
+            // ARDisplay assumes that the user is always standing at location 0,0,0. 
+            // When we add 3D rendering we will need to allow our position in 3D space 
+            // to change, which will cause the calculations below to change as well.
+
+            item.WorldLocation = ARHelper.DistanceBetween(settings.View.Location, item.GeoLocation);
+        }
+
+        /// <summary>
+        /// Calculates the virtual-world location based on an offset from the users location.
+        /// </summary>
+        /// <param name="settings">
+        /// The settings used to perform the calculation.
+        /// </param>
+        /// <param name="item">
+        /// The item to calculate and update.
+        /// </param>
+        static public void WorldFromRelativeLocation(ItemCalculationSettings settings, ARItem item)
+        {
+            // For now just update WorldLocation to be 
+            // the same as RelativeLocation. When 3D is 
+            // added we'll need to take into account the
+            // users current location in 3D space.
+            item.WorldLocation = item.RelativeLocation;
         }
     }
 }

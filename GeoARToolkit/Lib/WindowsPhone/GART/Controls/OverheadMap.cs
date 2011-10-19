@@ -101,11 +101,11 @@ namespace GART.Controls
                 throw new InvalidOperationException(string.Format("{0} template is invalid. A {1} named {2} must be supplied.", GetType().Name, typeof(Map).Name, PartNames.Map));
             }
 
-            // Keep the map from panning
-            map.MapPan += new EventHandler<MapDragEventArgs>(map_MapPan);
-            map.ManipulationStarted += new EventHandler<System.Windows.Input.ManipulationStartedEventArgs>(map_ManipulationStarted);
-            map.ManipulationDelta += new EventHandler<System.Windows.Input.ManipulationDeltaEventArgs>(map_ManipulationDelta);
-            map.ManipulationCompleted += new EventHandler<System.Windows.Input.ManipulationCompletedEventArgs>(map_ManipulationCompleted);
+            // TODO: Keep the map from panning (the following does not work???)
+            //map.MapPan += new EventHandler<MapDragEventArgs>(map_MapPan);
+            //map.ManipulationStarted += new EventHandler<System.Windows.Input.ManipulationStartedEventArgs>(map_ManipulationStarted);
+            //map.ManipulationDelta += new EventHandler<System.Windows.Input.ManipulationDeltaEventArgs>(map_ManipulationDelta);
+            //map.ManipulationCompleted += new EventHandler<System.Windows.Input.ManipulationCompletedEventArgs>(map_ManipulationCompleted);
 
             // Connect credentials
             map.CredentialsProvider = credentialsProvider;
@@ -114,27 +114,34 @@ namespace GART.Controls
             map.DataContext = arItems;
         }
 
-        void map_ManipulationCompleted(object sender, System.Windows.Input.ManipulationCompletedEventArgs e)
-        {
-            System.Diagnostics.Debug.WriteLine("Manip Completed");
-        }
+        //void map_ManipulationCompleted(object sender, System.Windows.Input.ManipulationCompletedEventArgs e)
+        //{
+        //    System.Diagnostics.Debug.WriteLine("Manip Completed");
+        //}
 
-        void map_ManipulationDelta(object sender, System.Windows.Input.ManipulationDeltaEventArgs e)
-        {
-            System.Diagnostics.Debug.WriteLine("Manip Completed");
-        }
+        //void map_ManipulationDelta(object sender, System.Windows.Input.ManipulationDeltaEventArgs e)
+        //{
+        //    System.Diagnostics.Debug.WriteLine("Manip Completed");
+        //}
 
-        void map_ManipulationStarted(object sender, System.Windows.Input.ManipulationStartedEventArgs e)
-        {
-            System.Diagnostics.Debug.WriteLine("Manip Completed");
-        }
+        //void map_ManipulationStarted(object sender, System.Windows.Input.ManipulationStartedEventArgs e)
+        //{
+        //    System.Diagnostics.Debug.WriteLine("Manip Completed");
+        //}
 
         private void OverheadMap_LayoutUpdated(object sender, EventArgs e)
         {
-            // Clip all children so the map doesn't get drawn outside our bounds
-            RectangleGeometry clipGeometry = new RectangleGeometry();
-            clipGeometry.Rect = new Rect(0, 0, this.ActualWidth, this.ActualHeight);
-            this.Clip = clipGeometry;
+            // This method gets called a lot. Check to see that we actually need to update 
+            // before we new up objects.
+            RectangleGeometry clipGeometry = this.Clip as RectangleGeometry;
+
+            if ((clipGeometry == null) || (clipGeometry.Bounds.Width != this.ActualWidth) || (clipGeometry.Bounds.Height != this.ActualHeight))
+            {
+                // Clip all children so the map doesn't get drawn outside our bounds
+                clipGeometry = new RectangleGeometry();
+                clipGeometry.Rect = new Rect(0, 0, this.ActualWidth, this.ActualHeight);
+                this.Clip = clipGeometry;
+            }
         }
         #endregion // Overrides / Event Handlers
 

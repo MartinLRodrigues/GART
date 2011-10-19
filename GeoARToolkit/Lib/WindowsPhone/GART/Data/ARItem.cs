@@ -22,40 +22,11 @@
 #endregion // License
 
 using System;
-using System.Net;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Documents;
-using System.Windows.Ink;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Animation;
-using System.Windows.Shapes;
-using Microsoft.Xna.Framework;
 using System.Device.Location;
+using Microsoft.Xna.Framework;
 
 namespace GART.Data
 {
-    public enum WorldCalculationMode
-    {
-        /// <summary>
-        /// <see cref="ARItem.WorldLocation">WorldLocation</see> is an absolute value and will not be calculated. 
-        /// </summary>
-        None,
-        /// <summary>
-        /// <see cref="ARItem.WorldLocation">WorldLocation</see> is calculated by determining the distance between  
-        /// <see cref="ARItem.GeoLocation">GeoLocation</see> and the users current location. 
-        /// </summary>
-        GeoRelativeToLocation,
-        /// <summary>
-        /// <see cref="ARItem.WorldLocation">WorldLocation</see> is calculated by treating 
-        /// <see cref="ARItem.RelativeLocation">RelativeLocation</see> as a constant distance away from the users 
-        /// current location. This method is useful for heads-up display items and items that should appear to 
-        /// travel with the user.
-        /// </summary>
-        RelativeToLocation
-    }
-
     /// <summary>
     /// An item that is rendered in one or more ARViews.
     /// </summary>
@@ -66,7 +37,7 @@ namespace GART.Data
         private object content;
         private GeoCoordinate geoLocation = GeoCoordinate.Unknown;
         private Vector3 relativeLocation = Vector3.Zero;
-        private WorldCalculationMode worldCalculationMode;
+        private Action<ItemCalculationSettings, ARItem> worldCalculation = ARHelper.WorldFromGeoLocation; // Default to calculate based on geo location since this will be the most common.
         private Vector3 worldLocation = Vector3.Zero;
         #endregion // Member Variables
 
@@ -143,18 +114,18 @@ namespace GART.Data
         /// <value>
         /// The mode used to calculate the items position in virtual world space.
         /// </value>
-        public WorldCalculationMode WorldCalculationMode
+        public Action<ItemCalculationSettings, ARItem> WorldCalculation
         {
             get
             {
-                return worldCalculationMode;
+                return worldCalculation;
             }
             set
             {
-                if (worldCalculationMode != value)
+                if (worldCalculation != value)
                 {
-                    worldCalculationMode = value;
-                    NotifyPropertyChanged(() => WorldCalculationMode);
+                    worldCalculation = value;
+                    NotifyPropertyChanged(() => WorldCalculation);
                 }
             }
         }

@@ -31,91 +31,21 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Shapes;
-using GART.Data;
+using GART.Controls;
 
-namespace BingAR.Data
+namespace GART.Data
 {
-    /**********************************************************
-     * 
-     * Search Filter Property Table
-     * http://msdn.microsoft.com/en-us/library/cc966911.aspx
-     * 
-     * UserRating is a double between 0 and 10 (property 3)
-     * 
-     * Cusine is a value from the Cuisine property table (property 22)
-     * 
-     * Cuisine Property Value Table
-     * http://msdn.microsoft.com/en-us/library/cc980840.aspx
-     * 
-     **********************************************************/
-    public class RestaurantItem : ARItem
+    /// <summary>
+    /// Provides settings to methods that perform calculations on an ARItems.
+    /// </summary>
+    public class ItemCalculationSettings
     {
-        private string cuisine;
-        private string name;
-        private double rating; // Double between 0 and 10
-
         /// <summary>
-        /// Gets a string that represnts the type of cuisine served at the restaurant.
+        /// Gets or sets the view that represents the users location and attitude.
         /// </summary>
-        public string Cuisine
-        {
-            get
-            {
-                return cuisine;
-            }
-            set
-            {
-                if (cuisine != value)
-                {
-                    cuisine = value;
-                    NotifyPropertyChanged(() => Cuisine);
-                }
-            }
-        }
-
-        /// <summary>
-        /// Gets a string that represnts the name of the restaurant.
-        /// </summary>
-        public string Name
-        {
-            get
-            {
-                return name;
-            }
-            set
-            {
-                if (name != value)
-                {
-                    name = value;
-                    NotifyPropertyChanged(() => Name);
-
-                    // Update the Content property as well for controls that
-                    // only show this memeber
-                    Content = value;
-                }
-            }
-        }
-
-        /// <summary>
-        /// Gets the average user rating of the restaurant.
-        /// </summary>
-        /// <remarks>
-        /// The rating is a double value between 0 and 10.
-        /// </remarks>
-        public double Rating
-        {
-            get
-            {
-                return rating;
-            }
-            set
-            {
-                if (rating != value)
-                {
-                    rating = value;
-                    NotifyPropertyChanged(() => Rating);
-                }
-            }
-        }
+        /// <value>
+        /// The view that represents the users location and attitude.
+        /// </value>
+        public IARView View { get; set; }
     }
 }
