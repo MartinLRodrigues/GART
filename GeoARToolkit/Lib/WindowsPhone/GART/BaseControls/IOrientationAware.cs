@@ -21,24 +21,20 @@
  ******************************************************************************/
 #endregion // License
 
-using System.ComponentModel;
-using System.Collections.ObjectModel;
-using GART.Data;
-using GART.BaseControls;
 using Microsoft.Phone.Controls;
+using System.ComponentModel;
 
-namespace GART.Controls
+namespace GART.BaseControls
 {
     /// <summary>
-    /// The interface for an augmented reality view that can render <see cref="WorldView"/> objects.
+    /// Interface used to rotate GART layers in sync with page orientation
     /// </summary>
-    public interface IARItemsView : IARView , IOrientationAware
+    public interface IOrientationAware
     {
         /// <summary>
-        /// Gets or sets the collection of ARItem objects that should be rendered in the view.
+        /// Gets or sets current page orientation
         /// </summary>
-        [Category("Data")]
-        ObservableCollection<ARItem> ARItems { get; set; }
-
+        [Category("AR")]
+        PageOrientation Orientation { get; set; }
     }
 }

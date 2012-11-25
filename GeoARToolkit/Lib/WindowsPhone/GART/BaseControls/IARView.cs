@@ -21,21 +21,18 @@
  ******************************************************************************/
 #endregion // License
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.ComponentModel;
 using System.Device.Location;
 using Matrix = Microsoft.Xna.Framework.Matrix;
 using System.Windows.Media;
+using GART.BaseControls;
 
 namespace GART.Controls
 {
     /// <summary>
     /// The interface for a view that renders augmented reality data.
     /// </summary>
-    public interface IARView
+    public interface IARView : IOrientationAware
     {
         /// <summary>
         /// Gets or sets a matrix that represents where the user is looking.

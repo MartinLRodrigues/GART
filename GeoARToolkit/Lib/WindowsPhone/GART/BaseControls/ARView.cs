@@ -35,6 +35,7 @@ using System.Device.Location;
 using System.ComponentModel;
 using Matrix = Microsoft.Xna.Framework.Matrix;
 using GART.Data;
+using Microsoft.Phone.Controls;
 
 namespace GART.Controls
 {
@@ -94,6 +95,17 @@ namespace GART.Controls
         {
             ((ARView)d).OnVideoChanged(e);
         }
+
+        /// <summary>
+        /// Identifies the <see cref="Orientation" /> dependency property
+        /// </summary>
+        static public readonly DependencyProperty OrientationProperty = DependencyProperty.Register("Orientation", typeof(PageOrientation), typeof(ARView), new PropertyMetadata(PageOrientation.Landscape, OnOrientationChanged));
+
+        private static void OnOrientationChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            ((ARView)d).OnOrientationChange(e);
+        }
+
         #endregion // Dependency Properties
         #endregion // Static Version
 
@@ -153,6 +165,16 @@ namespace GART.Controls
         {
 
         }
+
+        /// <summary>
+        /// Occurs when the value of the <see cref="Orientation" /> property has changed
+        /// </summary>
+        /// <param name="e"></param>
+        protected virtual void OnOrientationChange(DependencyPropertyChangedEventArgs e)
+        {
+
+        }
+
         #endregion // Overridables / Event Triggers
 
         #region Public Properties
@@ -250,7 +272,25 @@ namespace GART.Controls
                 SetValue(VideoProperty, value);
             }
         }
+
+        /// <summary>
+        /// Get or sets current deive orientation
+        /// </summary>
+        [Category("AR")]
+        public PageOrientation Orientation
+        {
+            get
+            {
+                return (PageOrientation)GetValue(OrientationProperty);
+            }
+            set
+            {
+                SetValue(OrientationProperty, value);
+            }
+        }
+
         #endregion // Public Properties
         #endregion // Instance Version
+
     }
 }

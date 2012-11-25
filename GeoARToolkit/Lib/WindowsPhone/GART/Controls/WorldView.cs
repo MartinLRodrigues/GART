@@ -22,17 +22,14 @@
 #endregion // License
 
 using System;
-using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
-using Microsoft.Devices;
-using Microsoft.Devices.Sensors;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Matrix = Microsoft.Xna.Framework.Matrix;
-using System.ComponentModel;
 using GART.Data;
+using Microsoft.Phone.Controls;
 
 namespace GART.Controls
 {
@@ -58,6 +55,8 @@ namespace GART.Controls
         Viewport viewport;
         Matrix projection;
         Matrix view;
+        PageOrientation previousOrientation;
+        PageOrientation currentOrientation;
         #endregion // Member Variables
 
         #region Constructors
@@ -71,7 +70,7 @@ namespace GART.Controls
         private void EnsureViewport()
         {
             // Only do this once
-            if (viewport.Width == 0)
+            if (viewport.Width == 0 || previousOrientation != currentOrientation)
             {
                 // Initialize the viewport and matrixes for 3d projection.
                 // Create the ViewPort based on the size of ourselves (the view) and not the screen. That's 
@@ -81,12 +80,49 @@ namespace GART.Controls
 
                 float aspect = viewport.AspectRatio;
                 projection = Matrix.CreatePerspectiveFieldOfView(1, aspect, NearClippingPlane, FarClippingPlane);
-                view = Matrix.CreateLookAt(new Vector3(0, 0, 1), Vector3.Zero, Vector3.Up);
+
+                // Rotate items by adjusting camera's up vector
+                Vector3 cameraUpVector = Vector3.Up;
+                switch (currentOrientation)
+                {
+                    case PageOrientation.PortraitUp:
+                        cameraUpVector = Vector3.Up;
+                        break;
+
+                    case PageOrientation.LandscapeLeft:
+                        cameraUpVector = Vector3.Right;
+                        break;
+
+                    case PageOrientation.LandscapeRight:
+                        cameraUpVector = Vector3.Left;
+                        break;
+
+                    default:
+                        cameraUpVector = Vector3.Down;
+                        break;
+
+                }
+
+                view = Matrix.CreateLookAt(new Vector3(0, 0, 1), Vector3.Zero, cameraUpVector);
+
+                previousOrientation = currentOrientation;
             }
         }
         #endregion // Internal Methods
 
         #region Overrides / Event Handlers
+
+        /// <summary>
+        /// Occurs when <see cref="Orientation"/> property has changed
+        /// </summary>
+        /// <param name="e"></param>
+        protected override void OnOrientationChanged(DependencyPropertyChangedEventArgs e)
+        {
+            currentOrientation = (PageOrientation)(e.NewValue);
+            base.OnOrientationChanged(e);
+        }
+        
+        
         /// <summary>
         /// Creates or identifies the element that is used to display the given item.
         /// </summary>

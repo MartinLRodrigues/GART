@@ -21,21 +21,15 @@
  ******************************************************************************/
 #endregion // License
 
-using System;
-using System.Net;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Documents;
-using System.Windows.Ink;
-using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Animation;
-using System.Windows.Shapes;
 using System.Device.Location;
 using System.ComponentModel;
 using Matrix = Microsoft.Xna.Framework.Matrix;
 using GART.Data;
 using System.Collections.ObjectModel;
+using Microsoft.Phone.Controls;
 
 namespace GART.Controls
 {
@@ -105,11 +99,27 @@ namespace GART.Controls
         {
             ((ARItemsView)d).OnVideoChanged(e);
         }
+
+        /// <summary>
+        /// Identifies the <see cref="Orientation"/> dependency property
+        /// </summary>
+        static public DependencyProperty OrientationProperty = DependencyProperty.Register("Orientation", typeof(PageOrientation), typeof(ARItemsView), new PropertyMetadata(PageOrientation.Landscape, OnOrientationChanged));
+
+        private static void OnOrientationChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            ((ARItemsView)d).OnOrientationChanged(e);
+        }
+
         #endregion // Dependency Properties
         #endregion // Static Version
 
         #region Instance Version
         #region Overridables / Event Triggers
+
+        protected virtual void OnOrientationChanged(DependencyPropertyChangedEventArgs e)
+        {
+        }
+        
         /// <summary>
         /// Occurs when the value of the <see cref="ARItems"/> property has changed.
         /// </summary>
@@ -292,7 +302,22 @@ namespace GART.Controls
                 SetValue(VideoProperty, value);
             }
         }
+
+        /// <summary>
+        /// Gets or sets current device orientation
+        /// </summary>
+        /// <value>
+        /// Current <see cref="PageOrientation"/> of a device
+        /// </value>
+        [Category("AR")]
+        public PageOrientation Orientation
+        {
+            get { return (PageOrientation)GetValue(OrientationProperty); }
+            set { SetValue(OrientationProperty, value); }
+        }
+
         #endregion // Public Properties
+
         #endregion // Instance Version
     }
 }

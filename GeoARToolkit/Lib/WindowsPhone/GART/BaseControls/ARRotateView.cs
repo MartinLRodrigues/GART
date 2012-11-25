@@ -32,6 +32,7 @@ using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Shapes;
 using System.ComponentModel;
+using Microsoft.Phone.Controls;
 
 namespace GART.Controls
 {
@@ -64,6 +65,9 @@ namespace GART.Controls
     public abstract class ARRotateView : ARView
     {
         #region Static Version
+
+        PageOrientation currentOrientation = PageOrientation.Portrait;
+
         #region Dependency Properties
         /// <summary>
         /// Identifies the <see cref="InvertRotation"/> dependency property.
@@ -94,6 +98,7 @@ namespace GART.Controls
         {
             ((ARRotateView)d).OnRotationSourceChanged(e);
         }
+
         #endregion // Dependency Properties
         #endregion // Static Version
 
@@ -125,6 +130,18 @@ namespace GART.Controls
                     break;
             }
 
+
+            switch (currentOrientation)
+            {
+                case PageOrientation.LandscapeLeft:
+                    angle -= 90;
+                    break;
+
+                case PageOrientation.LandscapeRight:
+                    angle += 90;
+                    break;
+            }
+
             // Invert?
             if (InvertRotation) { angle = 360 - angle; }
 
@@ -149,6 +166,15 @@ namespace GART.Controls
             {
                 UpdateRotation();
             }
+        }
+
+        /// <summary>
+        /// Occurs when the value of the <see cref="Orientation" /> property has changed
+        /// </summary>
+        /// <param name="e"></param>
+        protected override void OnOrientationChange(DependencyPropertyChangedEventArgs e)
+        {
+            currentOrientation = (PageOrientation)(e.NewValue);
         }
 
         /// <summary>

@@ -204,6 +204,18 @@ namespace BingAR
             base.OnNavigatedTo(e);
         }
 
+        /// <summary>
+        /// To support any orientation, override this method and call
+        /// ARDisplay.HandleOrientationChange() method
+        /// </summary>
+        /// <param name="e"></param>
+        protected override void OnOrientationChanged(OrientationChangedEventArgs e)
+        {
+            ARDisplay.HandleOrientationChange(e.Orientation);
+
+            base.OnOrientationChanged(e);
+        }
+
         private void HeadingButton_Click(object sender, System.EventArgs e)
         {
             UIHelper.ToggleVisibility(HeadingIndicator);

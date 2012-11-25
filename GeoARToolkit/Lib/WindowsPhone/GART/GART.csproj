@@ -64,6 +64,7 @@
   <ItemGroup>
     <Compile Include="BaseControls\ARView.cs" />
     <Compile Include="BaseControls\ARItemsView.cs" />
+    <Compile Include="BaseControls\IOrientationAware.cs" />
     <Compile Include="Controls\VideoPreview.cs" />
     <Compile Include="Controls\WorldViewItem.cs" />
     <Compile Include="Converters\PercentBingZoomConverter.cs" />

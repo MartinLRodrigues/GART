@@ -38,6 +38,7 @@ using System.Collections.Specialized;
 using System.Collections;
 using System.Windows.Markup;
 using GART.Data;
+using Microsoft.Phone.Controls;
 
 namespace GART.Controls
 {
@@ -45,6 +46,11 @@ namespace GART.Controls
     public class ARDisplay : Grid, IARItemsView
     {
         #region Static Version
+        /// <summary>
+        /// Rotation in degrees needed for items to be rendered in landscape right orientation
+        /// </summary>
+        private static readonly int landscapeRightRotation = 180;
+
         #region Dependency Properties
         /// <summary>
         /// Identifies the <see cref="ARItems"/> dependency property.
@@ -135,6 +141,14 @@ namespace GART.Controls
         {
             ((ARDisplay)d).OnVideoChanged(e);
         }
+
+        static public readonly DependencyProperty OrientationProperty = DependencyProperty.Register("Orientation", typeof(PageOrientation), typeof(ARDisplay), new PropertyMetadata(PageOrientation.Landscape, OnOrientationChanged));
+
+        private static void OnOrientationChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            ((ARDisplay)d).OnOrientationChanged(e);
+        }
+
         #endregion // Dependency Properties
         #endregion // Static Version
 
@@ -282,7 +296,7 @@ namespace GART.Controls
             vb.SetSource(photoCamera);
         }
 
-        
+
         private void StartLocation()
         {
             // If the Location object is null, initialize it and add a CurrentValueChanged
@@ -543,7 +557,7 @@ namespace GART.Controls
                 }
             }
         }
-        
+
         /// <summary>
         /// Occurs when an error was encountered starting or stopping a service.
         /// </summary>
@@ -572,7 +586,7 @@ namespace GART.Controls
                 view.TravelHeading = this.TravelHeading;
             }
         }
-        
+
         /// <summary>
         /// Occurs when the value of the <see cref="Video"/> property has changed.
         /// </summary>
@@ -586,6 +600,40 @@ namespace GART.Controls
             {
                 view.Video = this.Video;
             }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="e"></param>
+        protected virtual void OnOrientationChanged(DependencyPropertyChangedEventArgs e)
+        {
+            foreach (IARView view in views)
+            {
+                view.Orientation = this.Orientation;
+            }
+
+            // Need to handle videobrush rotation as well:
+            PageOrientation newOrientation = (PageOrientation)(e.NewValue);
+            CompositeTransform orientationRotation; 
+
+            switch (newOrientation)
+            {
+                case PageOrientation.LandscapeLeft:
+                    orientationRotation = new CompositeTransform() { CenterX = 0.5, CenterY = 0.5, Rotation = 0 };
+                    break;
+
+                case PageOrientation.LandscapeRight:
+                    orientationRotation = new CompositeTransform() { CenterX = 0.5, CenterY = 0.5, Rotation = landscapeRightRotation };
+                    break;
+
+                default:
+                    orientationRotation = new CompositeTransform() { CenterX = 0.5, CenterY = 0.5, Rotation = 90 };
+                    break;
+            } // end switch 
+
+            // Update our dependency property
+            Video.RelativeTransform = orientationRotation;
         }
         #endregion // Overridables / Event Triggers
 
@@ -613,6 +661,11 @@ namespace GART.Controls
 
             // Started
             servicesRunning = true;
+        }
+
+        public void HandleOrientationChange(PageOrientation newOrientation)
+        {
+            Orientation = newOrientation;
         }
 
         /// <summary>
@@ -850,6 +903,13 @@ namespace GART.Controls
             }
         }
 
+        [Category("AR")]
+        public PageOrientation Orientation
+        {
+            get { return (PageOrientation)GetValue(OrientationProperty); }
+            set { SetValue(OrientationProperty, value); }
+        }
+
         /// <summary>
         /// Gets the collection of child views associated with this display.
         /// </summary>
@@ -874,6 +934,8 @@ namespace GART.Controls
         /// </summary>
         public event EventHandler<ServiceErrorEventArgs> ServiceError;
         #endregion // Public Events
+
         #endregion // Instance Version
     }
+
 }
