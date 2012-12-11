@@ -21,15 +21,27 @@
  ******************************************************************************/
 #endregion // License
 
-using System;
+#if WP7
+using Microsoft.Phone.Controls;
 using System.Windows;
+using Point = System.Windows.Point;
 using System.Windows.Controls;
 using System.Windows.Media;
+#else
+using Point = Windows.Foundation.Point;
+using Windows.UI.Xaml;
+using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Media;
+#endif
+
+using GART.Data;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Matrix = Microsoft.Xna.Framework.Matrix;
-using GART.Data;
-using Microsoft.Phone.Controls;
+using System;
+using GART.BaseControls;
+
+
 
 namespace GART.Controls
 {
@@ -55,8 +67,8 @@ namespace GART.Controls
         Viewport viewport;
         Matrix projection;
         Matrix view;
-        PageOrientation previousOrientation;
-        PageOrientation currentOrientation;
+        ControlOrientation previousOrientation;
+        ControlOrientation currentOrientation;
         #endregion // Member Variables
 
         #region Constructors
@@ -85,15 +97,15 @@ namespace GART.Controls
                 Vector3 cameraUpVector = Vector3.Up;
                 switch (currentOrientation)
                 {
-                    case PageOrientation.PortraitUp:
+                    case ControlOrientation.PortraitUp:
                         cameraUpVector = Vector3.Up;
                         break;
 
-                    case PageOrientation.LandscapeLeft:
+                    case ControlOrientation.LandscapeLeft:
                         cameraUpVector = Vector3.Right;
                         break;
 
-                    case PageOrientation.LandscapeRight:
+                    case ControlOrientation.LandscapeRight:
                         cameraUpVector = Vector3.Left;
                         break;
 
@@ -118,7 +130,7 @@ namespace GART.Controls
         /// <param name="e"></param>
         protected override void OnOrientationChanged(DependencyPropertyChangedEventArgs e)
         {
-            currentOrientation = (PageOrientation)(e.NewValue);
+            currentOrientation = (ControlOrientation)(e.NewValue);
             base.OnOrientationChanged(e);
         }
         
@@ -235,7 +247,7 @@ namespace GART.Controls
         /// <returns>
         /// A <see cref="Vector3"/> in world space.
         /// </returns>
-        public Vector3 ScreenToWorld(System.Windows.Point pointOnScreen, Matrix attitude)
+        public Vector3 ScreenToWorld(Point pointOnScreen, Matrix attitude)
         {
             // Ensure that the viewport has been created
             EnsureViewport();
@@ -279,7 +291,7 @@ namespace GART.Controls
         /// <returns>
         /// A <see cref="Vector3"/> in world space.
         /// </returns>
-        public Vector3 ScreenToWorld(System.Windows.Point pointOnScreen)
+        public Vector3 ScreenToWorld(Point pointOnScreen)
         {
             // Use version with specified attitude and pass current attitude
             return ScreenToWorld(pointOnScreen, Attitude);

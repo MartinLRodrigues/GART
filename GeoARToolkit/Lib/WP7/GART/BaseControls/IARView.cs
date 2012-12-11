@@ -25,10 +25,12 @@
 using Microsoft.Phone.Controls.Maps.Platform;
 using Matrix = Microsoft.Xna.Framework.Matrix;
 using System.Windows.Media;
+using VideoSource = System.Windows.Media.Brush;
 #else
 using Bing.Maps;
 using Windows.Devices.Geolocation;
 using Windows.UI.Xaml.Media;
+using VideoSource = Windows.Media.Capture.MediaCapture;
 #endif
 
 using GART.BaseControls;
@@ -87,14 +89,14 @@ namespace GART.Controls
         double TravelHeading { get; set; }
 
         /// <summary>
-        /// Gets or sets a brush that represents the video feed from the camera.
+        /// Gets or sets the video source for the camera. This is a dependency property.
         /// </summary>
         /// <value>
-        /// A brush that represents the video feed from the camera.
+        /// The video source for the camera.
         /// </value>
         #if WP7
         [Category("AR")]
         #endif // WP7
-        Brush Video { get; set; }
+        VideoSource VideoSource { get; set; }
     }
 }

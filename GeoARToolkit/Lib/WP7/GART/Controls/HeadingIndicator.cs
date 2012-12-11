@@ -21,19 +21,11 @@
  ******************************************************************************/
 #endregion // License
 
-using System;
-using System.Collections.Generic;
+#if WP7
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Media;
-using Microsoft.Devices;
-using Microsoft.Devices.Sensors;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Phone.Controls.Maps;
-using Matrix = Microsoft.Xna.Framework.Matrix;
-using System.ComponentModel;
-using System.Device.Location;
+#else
+using Windows.UI.Xaml;
+#endif
 
 namespace GART.Controls
 {

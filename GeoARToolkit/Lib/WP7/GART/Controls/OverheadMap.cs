@@ -21,22 +21,22 @@
  ******************************************************************************/
 #endregion // License
 
-using System;
-using System.Collections.Generic;
-using System.Windows;
-using System.Windows.Controls;
+#if WP7
 using System.Windows.Media;
-using Microsoft.Devices;
-using Microsoft.Devices.Sensors;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Phone.Controls.Maps;
-using Matrix = Microsoft.Xna.Framework.Matrix;
-using System.ComponentModel;
-using System.Device.Location;
-using System.Collections.ObjectModel;
-using GART.Data;
 using Microsoft.Phone.Controls.Maps.Design;
+#else
+using Bing.Maps;
+using Windows.UI.Xaml;
+#endif
+
+using GART.Data;
+using System;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.Windows;
+
+
 
 namespace GART.Controls
 {
@@ -83,12 +83,6 @@ namespace GART.Controls
         #endregion // Constructors
 
         #region Overrides / Event Handlers
-        private void map_MapPan(object sender, MapDragEventArgs e)
-        {
-            // Disable panning
-            e.Handled = true;
-        }
-
         public override void OnApplyTemplate()
         {
             base.OnApplyTemplate();
@@ -161,7 +155,9 @@ namespace GART.Controls
         /// <summary>
         /// Gets or sets the collection of ARItem objects that should be rendered in the view.
         /// </summary>
+        #if WP7
         [Category("AR")]
+        #endif
         public ObservableCollection<ARItem> ARItems
         {
             get
@@ -181,8 +177,10 @@ namespace GART.Controls
         /// <summary>
         /// Gets or sets the credentials provider used by the underlying map.
         /// </summary>
+        #if WP7
         [Category("Map")]
         [TypeConverter(typeof(ApplicationIdCredentialsProviderConverter))]
+        #endif
         public CredentialsProvider CredentialsProvider
         {
             get
@@ -203,7 +201,9 @@ namespace GART.Controls
         /// <summary>
         /// Gets the <see cref="Map"/> instance used by the OverheadMap.
         /// </summary>
+        #if WP7
         [Category("Map")]
+        #endif
         public Map Map
         {
             get
@@ -218,7 +218,9 @@ namespace GART.Controls
         /// <value>
         /// The ZoomLevel of the <see cref="OverheadMap"/>. 0 is zoomed out completely and 1 is zoomed in completely.
         /// </value>
+        #if WP7
         [Category("Map")]
+        #endif
         public double ZoomLevel
         {
             get

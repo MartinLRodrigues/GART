@@ -26,26 +26,42 @@ using Microsoft.Devices;
 using Microsoft.Devices.Sensors;
 using Microsoft.Phone.Controls;
 using Microsoft.Phone.Controls.Maps.Platform;
-using Microsoft.Xna.Framework;
-using Matrix = Microsoft.Xna.Framework.Matrix;
 using System.Device.Location;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Markup;
 using System.Windows.Media;
+using VideoSource = System.Windows.Media.Brush;
+#else
+using Bing.Maps;
+using System.Threading.Tasks;
+using Windows.Devices.Geolocation;
+using Windows.Devices.Sensors;
+using Motion = Windows.Devices.Sensors.Inclinometer;
+using VideoSource = Windows.Media.Capture.MediaCapture;
+using Windows.UI.Xaml;
+using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Markup;
+using Windows.UI.Xaml.Media;
 #endif 
 
+using GART.BaseControls;
+using GART.Data;
+using Microsoft.Xna.Framework;
+using Matrix = Microsoft.Xna.Framework.Matrix;
 using System;
 using System.Collections;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
-using GART.BaseControls;
-using GART.Data;
 
 namespace GART.Controls
 {
+    #if WP7
     [ContentProperty("Views")]
+    #else
+    [ContentProperty(Name="Views")]
+    #endif
     public class ARDisplay : Grid, IARItemsView
     {
         #region Static Version
@@ -125,6 +141,13 @@ namespace GART.Controls
             ((ARDisplay)d).OnMotionEnabledChanged(e);
         }
 
+        static public readonly DependencyProperty OrientationProperty = DependencyProperty.Register("Orientation", typeof(ControlOrientation), typeof(ARDisplay), new PropertyMetadata(ControlOrientation.Landscape, OnOrientationChanged));
+
+        private static void OnOrientationChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            ((ARDisplay)d).OnOrientationChanged(e);
+        }
+
         /// <summary>
         /// Identifies the <see cref="TravelHeading"/> dependency property.
         /// </summary>
@@ -136,20 +159,13 @@ namespace GART.Controls
         }
 
         /// <summary>
-        /// Identifies the <see cref="Video"/> dependency property.
+        /// Identifies the <see cref="VideoSource"/> dependency property.
         /// </summary>
-        static public readonly DependencyProperty VideoProperty = DependencyProperty.Register("Video", typeof(Brush), typeof(ARDisplay), new PropertyMetadata(ARDefaults.VideoPlaceholderBrush, OnVideoChanged));
+        static public readonly DependencyProperty VideoSourceProperty = DependencyProperty.Register("VideoSource", typeof(VideoSource), typeof(ARDisplay), new PropertyMetadata(ARDefaults.DefaultVideoSource, OnVideoSourceChanged));
 
-        private static void OnVideoChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        private static void OnVideoSourceChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            ((ARDisplay)d).OnVideoChanged(e);
-        }
-
-        static public readonly DependencyProperty OrientationProperty = DependencyProperty.Register("Orientation", typeof(ControlOrientation), typeof(ARDisplay), new PropertyMetadata(ControlOrientation.Landscape, OnOrientationChanged));
-
-        private static void OnOrientationChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            ((ARDisplay)d).OnOrientationChanged(e);
+            ((ARDisplay)d).OnVideoSourceChanged(e);
         }
 
         #endregion // Dependency Properties
@@ -157,9 +173,17 @@ namespace GART.Controls
 
         #region Instance Version
         #region Member Variables
+
+        #if WP7
         private GeoCoordinateWatcher location;
         private Motion motion;
         private PhotoCamera photoCamera;
+        #else
+        private Geolocator location;
+        private Inclinometer motion;
+        private VideoSource videoSource = new VideoSource();
+        #endif
+
         private bool servicesRunning;
         private ObservableCollection<IARView> views;
         #endregion // Member Variables
@@ -195,6 +219,7 @@ namespace GART.Controls
             }
         }
 
+        #if WP7
         private void CreateVideoBrush()
         {
             // Create our brush
@@ -210,8 +235,9 @@ namespace GART.Controls
             // vb.Stretch = Stretch.Uniform;
 
             // Update our dependency property
-            Video = vb;
+            VideoSource = vb;
         }
+        #endif
 
         private void AddViews(IList views)
         {
@@ -232,7 +258,7 @@ namespace GART.Controls
                     // arView.Attitude = this.Attitude; // HACK: Uncommenting this line breaks the Visual Studio designer. No reason is known.
                     arView.AttitudeHeading = this.AttitudeHeading;
                     arView.Location = this.Location;
-                    arView.Video = this.Video;
+                    arView.VideoSource = this.VideoSource;
                 }
 
                 // If it's an IARItemsView give it the list of current items
@@ -262,7 +288,7 @@ namespace GART.Controls
                 if (arView != null)
                 {
                     // Set current values
-                    arView.Video = null;
+                    arView.VideoSource = null;
                 }
 
                 // If it's an IARItemsView disconnect the list of current items
@@ -279,26 +305,32 @@ namespace GART.Controls
             }
         }
 
+        #if WP7
         private void StartCamera()
         {
             // If the camera hasn't been created yet, create it.
             if (photoCamera == null)
             {
-                photoCamera = new Microsoft.Devices.PhotoCamera();
+                photoCamera = new PhotoCamera();
             }
 
             // If our video brush hasn't been created yet, create it
-            VideoBrush vb = Video as VideoBrush;
+            VideoBrush vb = VideoSource as VideoBrush;
             if (vb == null)
             {
                 CreateVideoBrush();
-                vb = Video as VideoBrush;
+                vb = VideoSource as VideoBrush;
             }
 
             // Connect the video brush to the camera
             vb.SetSource(photoCamera);
         }
-
+        #else
+        private async Task StartCamera()
+        {
+            await videoSource.InitializeAsync();
+        }
+        #endif
 
         private void StartLocation()
         {
@@ -306,25 +338,37 @@ namespace GART.Controls
             // event handler.
             if (location == null)
             {
+                #if WP7
+
                 location = new GeoCoordinateWatcher(GeoPositionAccuracy.High);
                 location.MovementThreshold = 0; // TODO: Do we leave this? High battery cost but most accurate AR simulation
-                location.PositionChanged += new EventHandler<GeoPositionChangedEventArgs<GeoCoordinate>>(location_PositionChanged);
-            }
+                location.PositionChanged += location_PositionChanged;
 
-            // Try to start the Motion API.
-            try
-            {
-                location.Start();
-            }
-            catch (Exception ex)
-            {
-                OnServiceError(new ServiceErrorEventArgs(ARService.Location, ex));
+                // Try to start the Motion API.
+                try
+                {
+                    location.Start();
+                }
+                catch (Exception ex)
+                {
+                    OnServiceError(new ServiceErrorEventArgs(ARService.Location, ex));
+                }
+
+                #else
+
+                location = new Geolocator();
+                location.MovementThreshold = 0; // TODO: Do we leave this? High battery cost but most accurate AR simulation
+                location.PositionChanged += location_PositionChanged;
+                
+                #endif
             }
         }
 
 
         private void StartMotion()
         {
+            #if WP7
+
             if (Motion.IsSupported)
             {
                 // If the Motion object is null, initialize it and add a CurrentValueChanged
@@ -350,6 +394,13 @@ namespace GART.Controls
             {
                 OnServiceError(new ServiceErrorEventArgs(ARService.Motion, new InvalidOperationException("The Motion API is not supported on this device.")));
             }
+            
+            #else
+
+            motion = Inclinometer.GetDefault();
+            motion.ReadingChanged += motion_ReadingChanged;
+
+            #endif
         }
 
         private void StopCamera()
@@ -377,6 +428,7 @@ namespace GART.Controls
         #endregion // Internal Methods
 
         #region Overrides / Event Handlers
+        #if WP7
         private void location_PositionChanged(object sender, GeoPositionChangedEventArgs<GeoCoordinate> e)
         {
             // This event arrives on a background thread. Use BeginInvoke to call
@@ -389,7 +441,17 @@ namespace GART.Controls
                 this.TravelHeading = loc.Course;
             });
         }
+        #else
+        private void location_PositionChanged(object sender, PositionChangedEventArgs e)
+        {
+            // Update ourslves which will in turn update all the views
+            var loc = e.Position.Coordinate;
+            this.Location = new Location(loc.Latitude, loc.Longitude);
+            this.TravelHeading = loc.Heading ?? 0; // Force to 0 degrees if unknown.
+        }
+        #endif
 
+        #if WP7
         private void motion_CurrentValueChanged(object sender, SensorReadingEventArgs<MotionReading> e)
         {
             // This event arrives on a background thread. Use BeginInvoke to call
@@ -403,6 +465,14 @@ namespace GART.Controls
                 this.AttitudeHeading = MathHelper.ToDegrees(mr.Attitude.Yaw);
             });
         }
+        #else
+        private void motion_ReadingChanged(Inclinometer sender, InclinometerReadingChangedEventArgs args)
+        {
+            // PORT: How do we do setup a rotation matrix like above?
+            // this.Attitude = 
+            this.AttitudeHeading = args.Reading.YawDegrees;
+        }
+        #endif
 
         private void views_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
@@ -592,17 +662,17 @@ namespace GART.Controls
         }
 
         /// <summary>
-        /// Occurs when the value of the <see cref="Video"/> property has changed.
+        /// Occurs when the value of the <see cref="VideoSource"/> property has changed.
         /// </summary>
         /// <param name="e">
         /// A <see cref="DependencyPropertyChangedEventArgs"/> containing event information.
         /// </param>
-        protected virtual void OnVideoChanged(DependencyPropertyChangedEventArgs e)
+        protected virtual void OnVideoSourceChanged(DependencyPropertyChangedEventArgs e)
         {
             // Update views
             foreach (IARView view in views)
             {
-                view.Video = this.Video;
+                view.VideoSource = this.VideoSource;
             }
         }
 
@@ -618,16 +688,16 @@ namespace GART.Controls
             }
 
             // Need to handle videobrush rotation as well:
-            PageOrientation newOrientation = (PageOrientation)(e.NewValue);
+            ControlOrientation newOrientation = (ControlOrientation)(e.NewValue);
             CompositeTransform orientationRotation; 
 
             switch (newOrientation)
             {
-                case PageOrientation.LandscapeLeft:
+                case ControlOrientation.LandscapeLeft:
                     orientationRotation = new CompositeTransform() { CenterX = 0.5, CenterY = 0.5, Rotation = 0 };
                     break;
 
-                case PageOrientation.LandscapeRight:
+                case ControlOrientation.LandscapeRight:
                     orientationRotation = new CompositeTransform() { CenterX = 0.5, CenterY = 0.5, Rotation = landscapeRightRotation };
                     break;
 
@@ -637,7 +707,7 @@ namespace GART.Controls
             } // end switch 
 
             // Update our dependency property
-            Video.RelativeTransform = orientationRotation;
+            VideoSource.RelativeTransform = orientationRotation;
         }
         #endregion // Overridables / Event Triggers
 
@@ -705,7 +775,9 @@ namespace GART.Controls
         /// <value>
         /// The collection of ARItems rendered by the <see cref="ARDisplay"/>.
         /// </value>
+        #if WP7
         [Category("AR")]
+        #endif
         public ObservableCollection<ARItem> ARItems
         {
             get
@@ -724,7 +796,9 @@ namespace GART.Controls
         /// <value>
         /// A matrix that represents where the user is looking.
         /// </value>
+        #if WP7
         [Category("AR")]
+        #endif
         public Matrix Attitude
         {
             get
@@ -743,7 +817,9 @@ namespace GART.Controls
         /// <value>
         /// <c>true</c> if the camera preview is enabled; otherwise <c>false</c>.
         /// </value>
+        #if WP7
         [Category("AR")]
+        #endif
         public bool CameraEnabled
         {
             get
@@ -762,7 +838,9 @@ namespace GART.Controls
         /// <value>
         /// The direction the user is looking in degrees.
         /// </value>
+        #if WP7
         [Category("AR")]
+        #endif
         public double AttitudeHeading
         {
             get
@@ -781,7 +859,9 @@ namespace GART.Controls
         /// <value>
         /// The location of the user in Geo space.
         /// </value>
+        #if WP7
         [Category("AR")]
+        #endif
         public Location Location
         {
             get
@@ -800,7 +880,9 @@ namespace GART.Controls
         /// <value>
         /// <c>true</c> if Location tracking is enabled; otherwise <c>false</c>.
         /// </value>
+        #if WP7
         [Category("AR")]
+        #endif
         public bool LocationEnabled
         {
             get
@@ -816,7 +898,9 @@ namespace GART.Controls
         /// <summary>
         /// Gets the <see cref="Motion"/> instance used by the ARDisplay.
         /// </summary>
+        #if WP7
         [Category("AR")]
+        #endif
         public Motion Motion
         {
             get
@@ -831,7 +915,9 @@ namespace GART.Controls
         /// <value>
         /// <c>true</c> if motion tracking is enabled; otherwise <c>false</c>.
         /// </value>
+        #if WP7
         [Category("AR")]
+        #endif
         public bool MotionEnabled
         {
             get
@@ -844,9 +930,20 @@ namespace GART.Controls
             }
         }
 
+
+        #if WP7
+        [Category("AR")]
+        #endif
+        public ControlOrientation Orientation
+        {
+            get { return (ControlOrientation)GetValue(OrientationProperty); }
+            set { SetValue(OrientationProperty, value); }
+        }
+
         /// <summary>
-        /// Gets the <see cref="PhotoCamera"/> instance used by the ARDisplay.
+        /// Gets the PhotoCamera used by the ARDisplay.
         /// </summary>
+        #if WP7
         [Category("AR")]
         public PhotoCamera PhotoCamera
         {
@@ -855,12 +952,15 @@ namespace GART.Controls
                 return photoCamera;
             }
         }
+        #endif
 
         /// <summary>
         /// Gets a value that indicates if AR services (Motion, Camera, etc.) have been started.
         /// </summary>
         /// <value><c>true</c> if AR services have been started; otherwise <c>false</c>.</value>
+        #if WP7
         [Category("AR")]
+        #endif
         public bool ServicesRunning
         {
             get
@@ -875,7 +975,9 @@ namespace GART.Controls
         /// <value>
         /// The direction the user is traveling in degrees.
         /// </value>
+        #if WP7
         [Category("AR")]
+        #endif
         public double TravelHeading
         {
             get
@@ -888,36 +990,33 @@ namespace GART.Controls
             }
         }
 
+        #if WP7
         /// <summary>
-        /// Gets or sets a brush that represents the video feed from the camera. This is a dependency property.
+        /// Gets or sets the video source for the camera. This is a dependency property.
         /// </summary>
         /// <value>
-        /// A brush that represents the video feed from the camera.
+        /// The video source for the camera.
         /// </value>
         [Category("AR")]
-        public Brush Video
+        public VideoSource VideoSource
         {
             get
             {
-                return (Brush)GetValue(VideoProperty);
+                return (VideoSource)GetValue(VideoSourceProperty);
             }
             set
             {
-                SetValue(VideoProperty, value);
+                SetValue(VideoSourceProperty, value);
             }
         }
-
-        [Category("AR")]
-        public ControlOrientation Orientation
-        {
-            get { return (ControlOrientation)GetValue(OrientationProperty); }
-            set { SetValue(OrientationProperty, value); }
-        }
+        #endif
 
         /// <summary>
         /// Gets the collection of child views associated with this display.
         /// </summary>
-        [Category("View")]
+        #if WP7
+        [Category("AR")]
+        #endif
         public ObservableCollection<IARView> Views
         {
             get

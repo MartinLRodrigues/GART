@@ -28,13 +28,15 @@ using System.Device.Location;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using VideoSource = System.Windows.Media.Brush;
 #else
 using Bing.Maps;
 using Windows.Devices.Geolocation;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
-#endif 
+using VideoSource = Windows.Media.Capture.MediaCapture;
+#endif
 
 using System.ComponentModel;
 using GART.BaseControls;
@@ -80,6 +82,16 @@ namespace GART.Controls
         }
 
         /// <summary>
+        /// Identifies the <see cref="Orientation" /> dependency property
+        /// </summary>
+        static public readonly DependencyProperty OrientationProperty = DependencyProperty.Register("Orientation", typeof(ControlOrientation), typeof(ARView), new PropertyMetadata(ControlOrientation.Landscape, OnOrientationChanged));
+
+        private static void OnOrientationChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            ((ARView)d).OnOrientationChange(e);
+        }
+
+        /// <summary>
         /// Identifies the <see cref="TravelHeading"/> dependency property.
         /// </summary>
         static public readonly DependencyProperty TravelHeadingProperty = DependencyProperty.Register("TravelHeading", typeof(double), typeof(ARView), new PropertyMetadata(0d, OnTravelHeadingChanged));
@@ -90,23 +102,13 @@ namespace GART.Controls
         }
 
         /// <summary>
-        /// Identifies the <see cref="Video"/> dependency property.
+        /// Identifies the <see cref="VideoSource"/> dependency property.
         /// </summary>
-        static public readonly DependencyProperty VideoProperty = DependencyProperty.Register("Video", typeof(Brush), typeof(ARView), new PropertyMetadata(ARDefaults.VideoPlaceholderBrush, OnVideoChanged));
+        static public readonly DependencyProperty VideoSourceProperty = DependencyProperty.Register("VideoSource", typeof(VideoSource), typeof(ARView), new PropertyMetadata(ARDefaults.DefaultVideoSource, OnVideoSourceChanged));
 
-        private static void OnVideoChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        private static void OnVideoSourceChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            ((ARView)d).OnVideoChanged(e);
-        }
-
-        /// <summary>
-        /// Identifies the <see cref="Orientation" /> dependency property
-        /// </summary>
-        static public readonly DependencyProperty OrientationProperty = DependencyProperty.Register("Orientation", typeof(ControlOrientation), typeof(ARView), new PropertyMetadata(ControlOrientation.Landscape, OnOrientationChanged));
-
-        private static void OnOrientationChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            ((ARView)d).OnOrientationChange(e);
+            ((ARView)d).OnVideoSourceChanged(e);
         }
 
         #endregion // Dependency Properties
@@ -159,12 +161,12 @@ namespace GART.Controls
         }
 
         /// <summary>
-        /// Occurs when the value of the <see cref="Video"/> property has changed.
+        /// Occurs when the value of the <see cref="VideoBrush"/> property has changed.
         /// </summary>
         /// <param name="e">
         /// A <see cref="DependencyPropertyChangedEventArgs"/> containing event information.
         /// </param>
-        protected virtual void OnVideoChanged(DependencyPropertyChangedEventArgs e)
+        protected virtual void OnVideoSourceChanged(DependencyPropertyChangedEventArgs e)
         {
 
         }
@@ -245,6 +247,24 @@ namespace GART.Controls
         }
 
         /// <summary>
+        /// Get or sets current deive orientation
+        /// </summary>
+        #if WP7
+        [Category("AR")]
+        #endif
+        public ControlOrientation Orientation
+        {
+            get
+            {
+                return (ControlOrientation)GetValue(OrientationProperty);
+            }
+            set
+            {
+                SetValue(OrientationProperty, value);
+            }
+        }
+
+        /// <summary>
         /// Gets or sets the direction the user is traveling in degrees. This is a dependency property.
         /// </summary>
         /// <value>
@@ -266,41 +286,23 @@ namespace GART.Controls
         }
 
         /// <summary>
-        /// Gets or sets a brush that represents the video feed from the camera. This is a dependency property.
+        /// Gets or sets the video source for the camera. This is a dependency property.
         /// </summary>
         /// <value>
-        /// A brush that represents the video feed from the camera.
+        /// The video source for the camera.
         /// </value>
         #if WP7
         [Category("AR")]
         #endif
-        public Brush Video
+        public VideoSource VideoSource
         {
             get
             {
-                return (Brush)GetValue(VideoProperty);
+                return (VideoSource)GetValue(VideoSourceProperty);
             }
             set
             {
-                SetValue(VideoProperty, value);
-            }
-        }
-
-        /// <summary>
-        /// Get or sets current deive orientation
-        /// </summary>
-        #if WP7
-        [Category("AR")]
-        #endif
-        public ControlOrientation Orientation
-        {
-            get
-            {
-                return (ControlOrientation)GetValue(OrientationProperty);
-            }
-            set
-            {
-                SetValue(OrientationProperty, value);
+                SetValue(VideoSourceProperty, value);
             }
         }
 

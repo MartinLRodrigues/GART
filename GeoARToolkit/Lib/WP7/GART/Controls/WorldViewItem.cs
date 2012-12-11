@@ -21,30 +21,30 @@
  ******************************************************************************/
 #endregion // License
 
-using System;
-using System.Net;
-using System.Windows;
+#if WP7
 using System.Windows.Controls;
-using System.Windows.Documents;
-using System.Windows.Ink;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Animation;
-using System.Windows.Shapes;
-using Microsoft.Xna.Framework;
-using Matrix = Microsoft.Xna.Framework.Matrix;
-using GART.Data;
+#else
+using Windows.UI.Xaml.Controls;
+#endif
 
 namespace GART.Controls
 {
     /// <summary>
     /// Represents a single item hosted in a <see cref="WorldView"/>.
     /// </summary>
+    #if WP7
     public class WorldViewItem : ListBoxItem
+    #else
+    public class WorldViewItem : ListViewItem
+    #endif
     {
         public WorldViewItem()
         {
+            #if WP7
             DefaultStyleKey = typeof(ListBoxItem);
+            #else
+            DefaultStyleKey = typeof(ListViewItem);
+            #endif
         }
     }
 }

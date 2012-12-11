@@ -22,15 +22,17 @@
 #endregion // License
 
 #if WP7
-using System.Device.Location;
-using System.Windows.Media;
 using Matrix = Microsoft.Xna.Framework.Matrix;
 using Microsoft.Phone.Controls.Maps.Platform;
+using System.Device.Location;
+using System.Windows.Media;
+using VideoSource = System.Windows.Media.Brush;
 #else
 using Bing.Maps;
 using Windows.Devices.Geolocation;
 using Windows.UI;
 using Windows.UI.Xaml.Media;
+using VideoSource = Windows.Media.Capture.MediaCapture;
 #endif
 
 namespace GART.Data
@@ -42,11 +44,12 @@ namespace GART.Data
         #if WP7
         static public Location DefaultStartLocation = new Location() { Latitude = 29.75770, Longitude = -95.36089, Altitude = 0 };
         static public Location NorthPole = new Location() { Latitude = 0, Longitude = 90, Altitude = 0 };
+        static public VideoSource DefaultVideoSource = new SolidColorBrush(Colors.Magenta);
         #else
         static public Location DefaultStartLocation = new Location() { Latitude = 29.75770, Longitude = -95.36089 };
         static public Location NorthPole = new Location() { Latitude = 0, Longitude = 90 };
+        static public VideoSource DefaultVideoSource = null;
         #endif
-        static public SolidColorBrush VideoPlaceholderBrush = new SolidColorBrush(Colors.Magenta);
         #endregion // Constants
     }
 }

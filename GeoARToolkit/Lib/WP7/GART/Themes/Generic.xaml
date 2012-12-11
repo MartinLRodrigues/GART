@@ -108,7 +108,7 @@
             <Setter.Value>
                 <ControlTemplate TargetType="controls:VideoPreview">
                     <!-- The VideoPreview control has a property called 'Video' which is a brush that has the video from the camera -->
-                    <Canvas Background="{TemplateBinding Video}" />
+                    <Canvas Background="{TemplateBinding VideoSource}" />
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
