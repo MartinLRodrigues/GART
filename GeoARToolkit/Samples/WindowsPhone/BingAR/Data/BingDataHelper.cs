@@ -35,6 +35,8 @@ using System.Linq;
 using System.Xml.Linq;
 using BingAR.Bing.Search;
 using System.Device.Location;
+using GART.Data;
+using Microsoft.Phone.Controls.Maps.Platform;
 
 namespace BingAR.Data
 {
@@ -55,9 +57,9 @@ namespace BingAR.Data
         /// The search result to get the coordinates for.
         /// </param>
         /// <returns>
-        /// The geo coordinate for the search result.
+        /// The geo point for the search result.
         /// </returns>
-        static public GeoCoordinate GetGeoCoordinate(SearchResultBase result)
+        static public Location GetLocation(SearchResultBase result)
         {
             // Try to find the location that was recorded in "rooftop" mode
             var bingLocation = (from l in result.LocationData.Locations
@@ -73,11 +75,16 @@ namespace BingAR.Data
             // Do we have a location to work with?
             if (bingLocation != null)
             {
-                return new GeoCoordinate(bingLocation.Latitude, bingLocation.Longitude);
+                return new Location()
+                {
+                    Latitude = bingLocation.Latitude,
+                    Longitude = bingLocation.Longitude,
+                    Altitude = bingLocation.Altitude
+                };
             }
             else
             {
-                return GeoCoordinate.Unknown;
+                return new Location();
             }
         }
 

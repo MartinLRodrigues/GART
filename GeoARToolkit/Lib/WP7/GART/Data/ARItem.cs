@@ -22,8 +22,15 @@
 #endregion // License
 
 using System;
-using System.Device.Location;
+#if WP7
+using Geoposition = System.Device.Location.GeoCoordinate;
+using Microsoft.Phone.Controls.Maps.Platform;
 using Microsoft.Xna.Framework;
+using System.Device.Location;
+#else
+using Bing.Maps;
+using Windows.Devices.Geolocation;
+#endif
 
 namespace GART.Data
 {
@@ -35,7 +42,7 @@ namespace GART.Data
         #region Instance Version
         #region Member Variables
         private object content;
-        private GeoCoordinate geoLocation = GeoCoordinate.Unknown;
+        private Location geoLocation = new Location();
         private Vector3 relativeLocation = Vector3.Zero;
         private Action<ItemCalculationSettings, ARItem> worldCalculation = ARHelper.WorldFromGeoLocation; // Default to calculate based on geo location since this will be the most common.
         private Vector3 worldLocation = Vector3.Zero;
@@ -70,7 +77,7 @@ namespace GART.Data
         /// <value>
         /// The location of the item in virtual geo space.
         /// </value>
-        public GeoCoordinate GeoLocation
+        public Location GeoLocation
         {
             get
             {

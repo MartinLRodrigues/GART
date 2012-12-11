@@ -21,28 +21,31 @@
  ******************************************************************************/
 #endregion // License
 
-using System;
-using System.Net;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Documents;
-using System.Windows.Ink;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Animation;
-using System.Windows.Shapes;
+#if WP7
 using System.Device.Location;
+using Geoposition = System.Device.Location.GeoCoordinate;
+using System.Windows.Media;
 using Matrix = Microsoft.Xna.Framework.Matrix;
-
+using Microsoft.Phone.Controls.Maps.Platform;
+#else
+using Bing.Maps;
+using Windows.Devices.Geolocation;
+using Windows.UI;
+using Windows.UI.Xaml.Media;
+#endif
 
 namespace GART.Data
 {
     static public class ARDefaults
     {
         #region Constants
-        static public GeoCoordinate DefaultStartLocation = new GeoCoordinate(29.75770, -95.36089);
+        static public Geoposition DefaultStartLocation = new Geoposition(29.75770, -95.36089, 0);
         static public Matrix EmptyMatrix = new Matrix();
-        static public GeoCoordinate NorthPole = new GeoCoordinate(90, 0);
+        #if WP7
+        static public Location NorthPole = new Location() { Latitude = 0, Longitude = 90, Altitude = 0 };
+        #else
+        static public Location NorthPole = new Location() { Latitude = 0, Longitude = 90 };
+        #endif
         static public SolidColorBrush VideoPlaceholderBrush = new SolidColorBrush(Colors.Magenta);
         #endregion // Constants
     }

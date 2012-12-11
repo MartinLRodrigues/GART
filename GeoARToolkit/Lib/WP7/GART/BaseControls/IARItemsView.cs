@@ -21,31 +21,25 @@
  ******************************************************************************/
 #endregion // License
 
-using System;
-using System.Net;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Documents;
-using System.Windows.Ink;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Animation;
-using System.Windows.Shapes;
+using System.ComponentModel;
+using System.Collections.ObjectModel;
+using GART.Data;
+using GART.BaseControls;
 
-namespace GART.Data
+namespace GART.Controls
 {
-    static public class ARValidators
+    /// <summary>
+    /// The interface for an augmented reality view that can render <see cref="WorldView"/> objects.
+    /// </summary>
+    public interface IARItemsView : IARView , IOrientationAware
     {
         /// <summary>
-        /// Validates that the value is a valid compass heading.
+        /// Gets or sets the collection of ARItem objects that should be rendered in the view.
         /// </summary>
-        /// <param name="heading">
-        /// The value to test.
-        /// </param>
-        static public void ValidateHeading(double heading)
-        {
-            // Validate
-            if ((heading < 0) || (heading > 360)) { throw new ArgumentOutOfRangeException("Heading can only be 0 to 360 degrees."); }
-        }
+        #if WP7
+        [Category("Data")]
+        #endif
+        ObservableCollection<ARItem> ARItems { get; set; }
+
     }
 }

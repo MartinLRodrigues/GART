@@ -158,9 +158,9 @@
     <Resource Include="FastFood.png" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\Lib\WindowsPhone\GART\GART.csproj">
+    <ProjectReference Include="..\..\..\Lib\WP7\GART\GART.WP7.csproj">
       <Project>{CA5A6DE2-803F-4A37-A4BD-5952D63BEEF9}</Project>
-      <Name>GART</Name>
+      <Name>GART.WP7</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\Silverlight for Phone\$(TargetFrameworkVersion)\Microsoft.Silverlight.$(TargetFrameworkProfile).Overrides.targets" />

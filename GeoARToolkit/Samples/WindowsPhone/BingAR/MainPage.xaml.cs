@@ -34,6 +34,7 @@ using System.Windows.Media.Animation;
 using System.Windows.Shapes;
 using Microsoft.Phone.Controls;
 using System.Device.Location;
+using Geoposition = System.Device.Location.GeoCoordinate;
 using GART;
 using GART.Data;
 using Microsoft.Xna.Framework;
@@ -42,6 +43,7 @@ using Microsoft.Phone.Controls.Maps;
 using BingAR.Data;
 using System.Collections.ObjectModel;
 using GART.Controls;
+using GART.BaseControls;
 
 namespace BingAR
 {
@@ -52,7 +54,7 @@ namespace BingAR
 
         #region Member Variables
         private CredentialsProvider bingCredentialProvider;
-        private GeoCoordinate lastSearchLocation;
+        private Geoposition lastSearchLocation;
         #endregion // Member Variables
 
         // Constructor
@@ -115,7 +117,7 @@ namespace BingAR
             ARDisplay.LocationEnabled = false;
 
             // Pretend we're here
-            ARDisplay.Location = new GeoCoordinate(30.07370, -95.43430);
+            ARDisplay.Location = new Geoposition(30.07370, -95.43430);
 
             // Search again
             BeginSearch();
@@ -145,7 +147,7 @@ namespace BingAR
                         RestaurantItem ri = new RestaurantItem()
                         {
                             Cuisine = BingDataHelper.GetCuisineName(businessResult),
-                            GeoLocation = BingDataHelper.GetGeoCoordinate(businessResult),
+                            GeoLocation = BingDataHelper.GetLocation(businessResult),
                             Name = businessResult.Name,
                             Rating = businessResult.UserRating,
                         };
@@ -211,7 +213,7 @@ namespace BingAR
         /// <param name="e"></param>
         protected override void OnOrientationChanged(OrientationChangedEventArgs e)
         {
-            ARDisplay.HandleOrientationChange(e.Orientation);
+            ARDisplay.HandleOrientationChange((ControlOrientation)e.Orientation);
 
             base.OnOrientationChanged(e);
         }

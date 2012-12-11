@@ -21,21 +21,27 @@
  ******************************************************************************/
 #endregion // License
 
-using System;
-using System.Net;
+#if WP7
+using System.Device.Location;
+using Geoposition = System.Device.Location.GeoCoordinate;
+using Matrix = Microsoft.Xna.Framework.Matrix;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Documents;
-using System.Windows.Ink;
-using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Animation;
-using System.Windows.Shapes;
-using System.Device.Location;
+#else
+using Windows.Devices.Geolocation;
+using Windows.UI.Xaml;
+using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Media;
+#endif 
+
 using System.ComponentModel;
-using Matrix = Microsoft.Xna.Framework.Matrix;
+using GART.BaseControls;
 using GART.Data;
-using Microsoft.Phone.Controls;
+
+
+
+
 
 namespace GART.Controls
 {
@@ -69,7 +75,7 @@ namespace GART.Controls
         /// <summary>
         /// Identifies the <see cref="Location"/> dependency property.
         /// </summary>
-        static public readonly DependencyProperty LocationProperty = DependencyProperty.Register("Location", typeof(GeoCoordinate), typeof(ARView), new PropertyMetadata(ARDefaults.DefaultStartLocation, OnLocationChanged));
+        static public readonly DependencyProperty LocationProperty = DependencyProperty.Register("Location", typeof(Geoposition), typeof(ARView), new PropertyMetadata(ARDefaults.DefaultStartLocation, OnLocationChanged));
 
         private static void OnLocationChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
@@ -99,7 +105,7 @@ namespace GART.Controls
         /// <summary>
         /// Identifies the <see cref="Orientation" /> dependency property
         /// </summary>
-        static public readonly DependencyProperty OrientationProperty = DependencyProperty.Register("Orientation", typeof(PageOrientation), typeof(ARView), new PropertyMetadata(PageOrientation.Landscape, OnOrientationChanged));
+        static public readonly DependencyProperty OrientationProperty = DependencyProperty.Register("Orientation", typeof(ControlOrientation), typeof(ARView), new PropertyMetadata(ControlOrientation.Landscape, OnOrientationChanged));
 
         private static void OnOrientationChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
@@ -184,7 +190,9 @@ namespace GART.Controls
         /// <value>
         /// A matrix that represents where the user is looking.
         /// </value>
+        #if WP7
         [Category("AR")]
+        #endif
         public Matrix Attitude
         {
             get
@@ -203,7 +211,9 @@ namespace GART.Controls
         /// <value>
         /// The direction the user is looking in degrees.
         /// </value>
+        #if WP7
         [Category("AR")]
+        #endif
         public double AttitudeHeading
         {
             get
@@ -222,12 +232,14 @@ namespace GART.Controls
         /// <value>
         /// The location of the user in Geo space.
         /// </value>
+        #if WP7
         [Category("AR")]
-        public GeoCoordinate Location
+        #endif
+        public Geoposition Location
         {
             get
             {
-                return (GeoCoordinate)GetValue(LocationProperty);
+                return (Geoposition)GetValue(LocationProperty);
             }
             set
             {
@@ -241,7 +253,9 @@ namespace GART.Controls
         /// <value>
         /// The direction the user is traveling in degrees.
         /// </value>
+        #if WP7
         [Category("AR")]
+        #endif
         public double TravelHeading
         {
             get
@@ -260,7 +274,9 @@ namespace GART.Controls
         /// <value>
         /// A brush that represents the video feed from the camera.
         /// </value>
+        #if WP7
         [Category("AR")]
+        #endif
         public Brush Video
         {
             get
@@ -276,12 +292,14 @@ namespace GART.Controls
         /// <summary>
         /// Get or sets current deive orientation
         /// </summary>
+        #if WP7
         [Category("AR")]
-        public PageOrientation Orientation
+        #endif
+        public ControlOrientation Orientation
         {
             get
             {
-                return (PageOrientation)GetValue(OrientationProperty);
+                return (ControlOrientation)GetValue(OrientationProperty);
             }
             set
             {

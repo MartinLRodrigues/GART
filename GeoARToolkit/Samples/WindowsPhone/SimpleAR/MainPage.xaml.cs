@@ -32,6 +32,7 @@ using GART.Controls;
 using GART.Data;
 using System.Device.Location;
 using System;
+using Microsoft.Phone.Controls.Maps.Platform;
 
 namespace SimpleAR
 {
@@ -49,7 +50,7 @@ namespace SimpleAR
         #endregion // Constructors
 
         #region Internal Methods
-        private void AddLabel(GeoCoordinate location, string label)
+        private void AddLabel(Location location, string label)
         {
             // We'll use the specified text for the content and we'll let 
             // the system automatically project the item into world space
@@ -66,16 +67,19 @@ namespace SimpleAR
         private void AddNearbyLabels()
         {
             // Start with the current location
-            GeoCoordinate current = ARDisplay.Location;
+            var current = ARDisplay.Location;
 
             // We'll add three Labels
             for (int i = 0; i < 3; i++)
             {
                 // Create a new location based on the users location plus
                 // a random offset.
-                GeoCoordinate offset = new GeoCoordinate(
-                    current.Latitude + ((double)rand.Next(-60, 60)) / 100000,
-                    current.Longitude + ((double)rand.Next(-60, 60)) / 100000);
+                Location offset = new Location()
+                    {
+                        Latitude = current.Latitude + ((double)rand.Next(-60, 60)) / 100000,
+                        Longitude = current.Longitude + ((double)rand.Next(-60, 60)) / 100000,
+                        Altitude = current.Altitude
+                    };
 
                 AddLabel(offset, "Location " + i);
             }

@@ -21,24 +21,27 @@
  ******************************************************************************/
 #endregion // License
 
-using System;
-using System.Collections.Generic;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Media;
+#if WP7
 using Microsoft.Devices;
 using Microsoft.Devices.Sensors;
+using Microsoft.Phone.Controls;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using Matrix = Microsoft.Xna.Framework.Matrix;
-using System.ComponentModel;
 using System.Device.Location;
+using Geoposition = System.Device.Location.GeoCoordinate;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Markup;
+using System.Windows.Media;
+#endif 
+
+using System;
+using System.Collections;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
-using System.Collections;
-using System.Windows.Markup;
+using System.ComponentModel;
+using GART.BaseControls;
 using GART.Data;
-using Microsoft.Phone.Controls;
 
 namespace GART.Controls
 {
@@ -95,7 +98,7 @@ namespace GART.Controls
         /// <summary>
         /// Identifies the <see cref="Location"/> dependency property.
         /// </summary>
-        static public readonly DependencyProperty LocationProperty = DependencyProperty.Register("Location", typeof(GeoCoordinate), typeof(ARDisplay), new PropertyMetadata(ARDefaults.DefaultStartLocation, OnLocationChanged));
+        static public readonly DependencyProperty LocationProperty = DependencyProperty.Register("Location", typeof(Geoposition), typeof(ARDisplay), new PropertyMetadata(ARDefaults.DefaultStartLocation, OnLocationChanged));
 
         private static void OnLocationChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
@@ -142,7 +145,7 @@ namespace GART.Controls
             ((ARDisplay)d).OnVideoChanged(e);
         }
 
-        static public readonly DependencyProperty OrientationProperty = DependencyProperty.Register("Orientation", typeof(PageOrientation), typeof(ARDisplay), new PropertyMetadata(PageOrientation.Landscape, OnOrientationChanged));
+        static public readonly DependencyProperty OrientationProperty = DependencyProperty.Register("Orientation", typeof(ControlOrientation), typeof(ARDisplay), new PropertyMetadata(ControlOrientation.Landscape, OnOrientationChanged));
 
         private static void OnOrientationChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
@@ -381,8 +384,9 @@ namespace GART.Controls
             Dispatcher.BeginInvoke(() =>
             {
                 // Update ourslves which will in turn update all the views
-                this.Location = e.Position.Location;
-                this.TravelHeading = e.Position.Location.Course;
+                var loc = e.Position.Location;
+                this.Location = loc; // new Location(loc.Latitude, loc.Longitude, loc.Altitude, loc.HorizontalAccuracy, loc.VerticalAccuracy);
+                this.TravelHeading = loc.Course;
             });
         }
 
@@ -663,7 +667,7 @@ namespace GART.Controls
             servicesRunning = true;
         }
 
-        public void HandleOrientationChange(PageOrientation newOrientation)
+        public void HandleOrientationChange(ControlOrientation newOrientation)
         {
             Orientation = newOrientation;
         }
@@ -778,11 +782,11 @@ namespace GART.Controls
         /// The location of the user in Geo space.
         /// </value>
         [Category("AR")]
-        public GeoCoordinate Location
+        public Geoposition Location
         {
             get
             {
-                return (GeoCoordinate)GetValue(LocationProperty);
+                return (Geoposition)GetValue(LocationProperty);
             }
             set
             {
@@ -904,9 +908,9 @@ namespace GART.Controls
         }
 
         [Category("AR")]
-        public PageOrientation Orientation
+        public ControlOrientation Orientation
         {
-            get { return (PageOrientation)GetValue(OrientationProperty); }
+            get { return (ControlOrientation)GetValue(OrientationProperty); }
             set { SetValue(OrientationProperty, value); }
         }
 

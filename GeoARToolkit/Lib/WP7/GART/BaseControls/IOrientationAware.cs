@@ -21,46 +21,56 @@
  ******************************************************************************/
 #endregion // License
 
-using System;
-using System.Net;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Documents;
-using System.Windows.Ink;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Animation;
-using System.Windows.Shapes;
+using System.ComponentModel;
 
-namespace GART.Data
+namespace GART.BaseControls
 {
-    public static class GeoCodeCalc
+    /// <summary>
+    /// An enumeration defining the possible orientations of a control.
+    /// </summary>
+    public enum ControlOrientation
     {
-        public const double EarthRadiusInMiles = 3956.0;
-        public const double EarthRadiusInKilometers = 6367.0;
-        public static double ToRadian(double val) { return val * (Math.PI / 180); }
-        public static double DiffRadian(double val1, double val2) { return ToRadian(val2) - ToRadian(val1); }
-        /// <summary> 
-        /// Calculate the distance between two geocodes. Defaults to using Miles. 
-        /// </summary> 
-        public static double CalcDistance(double lat1, double lng1, double lat2, double lng2)
-        {
-            return CalcDistance(lat1, lng1, lat2, lng2, GeoCodeCalcMeasurement.Miles);
-        }
-        /// <summary> 
-        /// Calculate the distance between two geocodes. 
-        /// </summary> 
-        public static double CalcDistance(double lat1, double lng1, double lat2, double lng2, GeoCodeCalcMeasurement m)
-        {
-            double radius = GeoCodeCalc.EarthRadiusInMiles;
-            if (m == GeoCodeCalcMeasurement.Kilometers) { radius = GeoCodeCalc.EarthRadiusInKilometers; }
-            return radius * 2 * Math.Asin(Math.Min(1, Math.Sqrt((Math.Pow(Math.Sin((DiffRadian(lat1, lat2)) / 2.0), 2.0) + Math.Cos(ToRadian(lat1)) * Math.Cos(ToRadian(lat2)) * Math.Pow(Math.Sin((DiffRadian(lng1, lng2)) / 2.0), 2.0)))));
-        }
-    }
-    public enum GeoCodeCalcMeasurement : int
-    {
-        Miles = 0,
-        Kilometers = 1
+        /// <summary>
+        /// No orientation is specified.
+        /// </summary>
+        None = 0,
+        /// <summary>
+        /// Portrait orientation.
+        /// </summary>
+        Portrait = 1,
+        /// <summary>
+        /// Landscape orientation.
+        /// </summary>
+        Landscape = 2,
+        /// <summary>
+        /// Portrait orientation.
+        /// </summary>
+        PortraitUp = 5,
+        /// <summary>
+        /// Portrait orientation. This orientation is never used.
+        /// </summary>
+        PortraitDown = 9,
+        /// <summary>
+        /// Landscape orientation with the top of the page rotated to the left.
+        /// </summary>
+        LandscapeLeft = 18,
+        /// <summary>
+        /// Landscape orientation with the top of the page rotated to the right.
+        /// </summary>
+        LandscapeRight = 34,
     }
 
+    /// <summary>
+    /// Interface used to rotate GART layers in sync with page orientation
+    /// </summary>
+    public interface IOrientationAware
+    {
+        /// <summary>
+        /// Gets or sets current page orientation
+        /// </summary>
+        #if WP7
+        [Category("AR")]
+        #endif
+        ControlOrientation Orientation { get; set; }
+    }
 }

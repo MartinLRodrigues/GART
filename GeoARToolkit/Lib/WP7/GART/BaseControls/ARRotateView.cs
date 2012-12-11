@@ -21,18 +21,16 @@
  ******************************************************************************/
 #endregion // License
 
-using System;
-using System.Net;
+#if WP7
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Documents;
-using System.Windows.Ink;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Animation;
-using System.Windows.Shapes;
-using System.ComponentModel;
 using Microsoft.Phone.Controls;
+#else
+using Windows.UI.Xaml;
+#endif
+
+using GART.BaseControls;
+using System.ComponentModel;
 
 namespace GART.Controls
 {
@@ -66,7 +64,7 @@ namespace GART.Controls
     {
         #region Static Version
 
-        PageOrientation currentOrientation = PageOrientation.Portrait;
+        ControlOrientation currentOrientation = ControlOrientation.Portrait;
 
         #region Dependency Properties
         /// <summary>
@@ -92,7 +90,7 @@ namespace GART.Controls
         /// <summary>
         /// Identifies the <see cref="RotationSource"/> dependency property.
         /// </summary>
-        static public readonly DependencyProperty RotationSourceProperty = DependencyProperty.Register("RotationSource", typeof(RotationSource), typeof(ARRotateView), new PropertyMetadata(OnRotationSourceChanged));
+        static public readonly DependencyProperty RotationSourceProperty = DependencyProperty.Register("RotationSource", typeof(RotationSource), typeof(ARRotateView), new PropertyMetadata(RotationSource.AttitudeHeading, OnRotationSourceChanged));
 
         private static void OnRotationSourceChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
@@ -133,11 +131,11 @@ namespace GART.Controls
 
             switch (currentOrientation)
             {
-                case PageOrientation.LandscapeLeft:
+                case ControlOrientation.LandscapeLeft:
                     angle -= 90;
                     break;
 
-                case PageOrientation.LandscapeRight:
+                case ControlOrientation.LandscapeRight:
                     angle += 90;
                     break;
             }
@@ -174,7 +172,7 @@ namespace GART.Controls
         /// <param name="e"></param>
         protected override void OnOrientationChange(DependencyPropertyChangedEventArgs e)
         {
-            currentOrientation = (PageOrientation)(e.NewValue);
+            currentOrientation = (ControlOrientation)(e.NewValue);
         }
 
         /// <summary>
@@ -274,7 +272,9 @@ namespace GART.Controls
         /// <value>
         /// A <see cref="RotationSource"/> enum that indicates the source of the rotation.
         /// </value>
+        #if WP7
         [Category("AR")]
+        #endif
         public RotationSource RotationSource
         {
             get

@@ -21,11 +21,19 @@
  ******************************************************************************/
 #endregion // License
 
-using System.ComponentModel;
+#if WP7
 using System.Device.Location;
+using Geoposition = System.Device.Location.GeoCoordinate;
 using Matrix = Microsoft.Xna.Framework.Matrix;
 using System.Windows.Media;
+#else
+using Windows.Devices.Geolocation;
+using Windows.UI.Xaml.Media;
+#endif
+
 using GART.BaseControls;
+using System.ComponentModel;
+using GART.Data;
 
 namespace GART.Controls
 {
@@ -40,7 +48,9 @@ namespace GART.Controls
         /// <value>
         /// A matrix that represents where the user is looking.
         /// </value>
+        #if WP7
         [Category("AR")]
+        #endif // WP7
         Matrix Attitude { get; set; }
 
         /// <summary>
@@ -49,7 +59,9 @@ namespace GART.Controls
         /// <value>
         /// The direction the user is looking in degrees.
         /// </value>
+        #if WP7
         [Category("AR")]
+        #endif // WP7
         double AttitudeHeading { get; set; }
 
         /// <summary>
@@ -58,8 +70,10 @@ namespace GART.Controls
         /// <value>
         /// The location of the user in Geo space.
         /// </value>
+        #if WP7
         [Category("AR")]
-        GeoCoordinate Location { get; set; }
+        #endif // WP7
+        Geoposition Location { get; set; }
 
         /// <summary>
         /// Gets or sets the direction the user is traveling in degrees.
@@ -67,7 +81,9 @@ namespace GART.Controls
         /// <value>
         /// The direction the user is traveling in degrees.
         /// </value>
+        #if WP7
         [Category("AR")]
+        #endif // WP7
         double TravelHeading { get; set; }
 
         /// <summary>
@@ -76,7 +92,9 @@ namespace GART.Controls
         /// <value>
         /// A brush that represents the video feed from the camera.
         /// </value>
+        #if WP7
         [Category("AR")]
+        #endif // WP7
         Brush Video { get; set; }
     }
 }

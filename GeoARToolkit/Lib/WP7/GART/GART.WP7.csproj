@@ -30,7 +30,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>Bin\Debug</OutputPath>
-    <DefineConstants>DEBUG;TRACE;SILVERLIGHT;WINDOWS_PHONE</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;SILVERLIGHT;WINDOWS_PHONE;WP7</DefineConstants>
     <NoStdLib>true</NoStdLib>
     <NoConfig>true</NoConfig>
     <ErrorReport>prompt</ErrorReport>
@@ -40,7 +40,7 @@
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>Bin\Release</OutputPath>
-    <DefineConstants>TRACE;SILVERLIGHT;WINDOWS_PHONE</DefineConstants>
+    <DefineConstants>TRACE;SILVERLIGHT;WINDOWS_PHONE;WP7</DefineConstants>
     <NoStdLib>true</NoStdLib>
     <NoConfig>true</NoConfig>
     <ErrorReport>prompt</ErrorReport>
@@ -68,8 +68,10 @@
     <Compile Include="Controls\VideoPreview.cs" />
     <Compile Include="Controls\WorldViewItem.cs" />
     <Compile Include="Converters\PercentBingZoomConverter.cs" />
+    <Compile Include="Converters\UnknownGeoCoordinateConverter.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Converters\UnknownGeoVisibilityConverter.cs" />
-    <Compile Include="Converters\UnknownGeoCoordinateConverter.cs" />
     <Compile Include="Data\ARDefaults.cs" />
     <Compile Include="BaseControls\IARItemsView.cs" />
     <Compile Include="Controls\ARDisplay.cs" />
@@ -81,6 +83,7 @@
     <Compile Include="Data\ARValidators.cs" />
     <Compile Include="Data\ExpressionExtensions.cs" />
     <Compile Include="Data\GeoCodeCalc.cs" />
+    <Compile Include="Data\GeoExtensions.cs" />
     <Compile Include="Data\ItemCalculationSettings.cs" />
     <Compile Include="Data\ObservableObject.cs" />
     <Compile Include="UIHelper.cs" />

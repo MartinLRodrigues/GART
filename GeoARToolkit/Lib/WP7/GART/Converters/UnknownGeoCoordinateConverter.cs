@@ -39,25 +39,32 @@ using GART.Data;
 
 namespace GART.Converters
 {
-    public class UnknownGeoVisibilityConverter : IValueConverter
+    /// <summary>
+    /// Allows the Bing map control to deal with GeoCoordinates that are unknown.
+    /// </summary>
+    /// <remarks>
+    /// This converter works by replacing any Unknown GeoCoordinate with the GeoCoordinate for the North Pole during binding. If an item should not 
+    /// be displayed when its GeoCoordinate is unknown, the <see cref="UnknownGeoVisibilityConverter"/> in combination with this converter.
+    /// </remarks>
+    public class UnknownGeoCoordinateConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
             // Validate
-            if (!(value is GeoCoordinate)) { throw new InvalidOperationException("Only GeoCoordinate is supported as a source."); }
-            if (targetType != typeof(Visibility)) { throw new InvalidOperationException("Only Visibility is supported as the target type"); }
+            if (!(value is Location)) { throw new InvalidOperationException("Only Location is supported as a source."); }
+            if (targetType != typeof(GeoCoordinate)) { throw new InvalidOperationException("Only GeoCoordinate is supported as the target type"); }
 
             // Cast to proper types
-            GeoCoordinate geo = (GeoCoordinate)value;
+            var starting = (Location)value;
 
-            // If it's unknown the item shouldn't be shown
-            if ((geo.IsUnknown) || (geo.Equals(ARDefaults.NorthPole)))
+            // If it's unknown we need to return a new one
+            if (starting.IsUnknown())
             {
-                return Visibility.Collapsed;
+                return ARDefaults.NorthPole;
             }
             else
             {
-                return Visibility.Visible;
+                return (GeoCoordinate)starting;
             }
         }
 

@@ -21,24 +21,21 @@
  ******************************************************************************/
 #endregion // License
 
-using System.ComponentModel;
-using System.Collections.ObjectModel;
-using GART.Data;
-using GART.BaseControls;
-using Microsoft.Phone.Controls;
+using GART.Controls;
 
-namespace GART.Controls
+namespace GART.Data
 {
     /// <summary>
-    /// The interface for an augmented reality view that can render <see cref="WorldView"/> objects.
+    /// Provides settings to methods that perform calculations on an ARItems.
     /// </summary>
-    public interface IARItemsView : IARView , IOrientationAware
+    public class ItemCalculationSettings
     {
         /// <summary>
-        /// Gets or sets the collection of ARItem objects that should be rendered in the view.
+        /// Gets or sets the view that represents the users location and attitude.
         /// </summary>
-        [Category("Data")]
-        ObservableCollection<ARItem> ARItems { get; set; }
-
+        /// <value>
+        /// The view that represents the users location and attitude.
+        /// </value>
+        public IARView View { get; set; }
     }
 }

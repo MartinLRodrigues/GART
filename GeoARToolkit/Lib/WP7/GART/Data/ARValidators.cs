@@ -22,30 +22,21 @@
 #endregion // License
 
 using System;
-using System.Net;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Documents;
-using System.Windows.Ink;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Animation;
-using System.Windows.Shapes;
-using GART.Controls;
 
 namespace GART.Data
 {
-    /// <summary>
-    /// Provides settings to methods that perform calculations on an ARItems.
-    /// </summary>
-    public class ItemCalculationSettings
+    static public class ARValidators
     {
         /// <summary>
-        /// Gets or sets the view that represents the users location and attitude.
+        /// Validates that the value is a valid compass heading.
         /// </summary>
-        /// <value>
-        /// The view that represents the users location and attitude.
-        /// </value>
-        public IARView View { get; set; }
+        /// <param name="heading">
+        /// The value to test.
+        /// </param>
+        static public void ValidateHeading(double heading)
+        {
+            // Validate
+            if ((heading < 0) || (heading > 360)) { throw new ArgumentOutOfRangeException("Heading can only be 0 to 360 degrees."); }
+        }
     }
 }

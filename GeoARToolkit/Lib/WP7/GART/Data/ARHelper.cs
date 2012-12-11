@@ -21,19 +21,16 @@
  ******************************************************************************/
 #endregion // License
 
-using System;
-using System.Net;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Documents;
-using System.Windows.Ink;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Animation;
-using System.Windows.Shapes;
-using Microsoft.Xna.Framework;
+#if WP7
 using System.Device.Location;
-using GART.Controls;
+using Geoposition = System.Device.Location.GeoCoordinate;
+using Microsoft.Phone.Controls.Maps.Platform;
+using Microsoft.Xna.Framework;
+#else
+using Bing.Maps;
+#endif
+
+using System;
 
 namespace GART.Data
 {
@@ -45,13 +42,13 @@ namespace GART.Data
         #endregion // Constants
 
         /// <summary>
-        /// Calculates the distance between two GeoCoordinates in 3D space.
+        /// Calculates the distance between two points in geo space.
         /// </summary>
         /// <param name="a">
-        /// The first GeoCoordinate
+        /// The first point
         /// </param>
         /// <param name="b">
-        /// The second GeoCoordinate
+        /// The second point
         /// </param>
         /// <returns>
         /// The distance between the two points in 3D space.
@@ -60,7 +57,7 @@ namespace GART.Data
         /// This method assumes 1 3D unit = 1 meter. This method is also not incredibly accurate 
         /// but it's accurate enough for the scales used in most AR applications.
         /// </remarks>
-        static public Vector3 DistanceBetween(GeoCoordinate a, GeoCoordinate b)
+        static public Vector3 DistanceBetween(Geoposition a, Location b)
         {
             // Use GeoCoordinate provided methods to calculate distance. Use 
             // same longitude on both points to calculate latitude distance and 
@@ -98,7 +95,21 @@ namespace GART.Data
         /// <returns>
         /// The WGS84 string.
         /// </returns>
-        static public string ToWGS84String(this GeoCoordinate coordinate)
+        static public string ToWGS84String(this Geoposition coordinate)
+        {
+            return string.Format("{0}, {1}", coordinate.Latitude, coordinate.Longitude);
+        }
+
+        /// <summary>
+        /// Converts the <see cref="GeoCoordinate"/> to a properly formatted WGS84 string.
+        /// </summary>
+        /// <param name="coordinate">
+        /// The GeoCoordinate to convert.
+        /// </param>
+        /// <returns>
+        /// The WGS84 string.
+        /// </returns>
+        static public string ToWGS84String(this Location coordinate)
         {
             return string.Format("{0}, {1}", coordinate.Latitude, coordinate.Longitude);
         }
