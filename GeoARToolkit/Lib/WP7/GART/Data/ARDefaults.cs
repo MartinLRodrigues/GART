@@ -23,7 +23,6 @@
 
 #if WP7
 using System.Device.Location;
-using Geoposition = System.Device.Location.GeoCoordinate;
 using System.Windows.Media;
 using Matrix = Microsoft.Xna.Framework.Matrix;
 using Microsoft.Phone.Controls.Maps.Platform;
@@ -39,11 +38,12 @@ namespace GART.Data
     static public class ARDefaults
     {
         #region Constants
-        static public Geoposition DefaultStartLocation = new Geoposition(29.75770, -95.36089, 0);
         static public Matrix EmptyMatrix = new Matrix();
         #if WP7
+        static public Location DefaultStartLocation = new Location() { Latitude = 29.75770, Longitude = -95.36089, Altitude = 0 };
         static public Location NorthPole = new Location() { Latitude = 0, Longitude = 90, Altitude = 0 };
         #else
+        static public Location DefaultStartLocation = new Location() { Latitude = 29.75770, Longitude = -95.36089 };
         static public Location NorthPole = new Location() { Latitude = 0, Longitude = 90 };
         #endif
         static public SolidColorBrush VideoPlaceholderBrush = new SolidColorBrush(Colors.Magenta);

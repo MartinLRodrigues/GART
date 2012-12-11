@@ -34,7 +34,6 @@ using System.Windows.Media.Animation;
 using System.Windows.Shapes;
 using Microsoft.Phone.Controls;
 using System.Device.Location;
-using Geoposition = System.Device.Location.GeoCoordinate;
 using GART;
 using GART.Data;
 using Microsoft.Xna.Framework;
@@ -44,6 +43,7 @@ using BingAR.Data;
 using System.Collections.ObjectModel;
 using GART.Controls;
 using GART.BaseControls;
+using Microsoft.Phone.Controls.Maps.Platform;
 
 namespace BingAR
 {
@@ -54,7 +54,7 @@ namespace BingAR
 
         #region Member Variables
         private CredentialsProvider bingCredentialProvider;
-        private Geoposition lastSearchLocation;
+        private Location lastSearchLocation;
         #endregion // Member Variables
 
         // Constructor
@@ -117,7 +117,7 @@ namespace BingAR
             ARDisplay.LocationEnabled = false;
 
             // Pretend we're here
-            ARDisplay.Location = new Geoposition(30.07370, -95.43430);
+            ARDisplay.Location = new Location() { Latitude = 30.07370, Longitude = -95.43430 };
 
             // Search again
             BeginSearch();

@@ -23,7 +23,6 @@
 
 #if WP7
 using System.Device.Location;
-using Geoposition = System.Device.Location.GeoCoordinate;
 using Microsoft.Phone.Controls.Maps.Platform;
 using Microsoft.Xna.Framework;
 #else
@@ -57,13 +56,14 @@ namespace GART.Data
         /// This method assumes 1 3D unit = 1 meter. This method is also not incredibly accurate 
         /// but it's accurate enough for the scales used in most AR applications.
         /// </remarks>
-        static public Vector3 DistanceBetween(Geoposition a, Location b)
+        static public Vector3 DistanceBetween(Location a, Location b)
         {
             // Use GeoCoordinate provided methods to calculate distance. Use 
             // same longitude on both points to calculate latitude distance and 
             // use same latitude on both points to calculate longitude distance.
-            float latitudeMeters = (float)a.GetDistanceTo(new GeoCoordinate(b.Latitude, a.Longitude));
-            float longitudeMeters = (float)a.GetDistanceTo(new GeoCoordinate(a.Latitude, b.Longitude));
+            GeoCoordinate a2 = a;
+            float latitudeMeters = (float)a2.GetDistanceTo(new GeoCoordinate(b.Latitude, a.Longitude));
+            float longitudeMeters = (float)a2.GetDistanceTo(new GeoCoordinate(a.Latitude, b.Longitude));
 
             // Invert the distance sign if necessary to account for direction 
             if (a.Latitude < b.Latitude)
@@ -84,20 +84,6 @@ namespace GART.Data
 
             // Return the new point
             return new Vector3(longitudeMeters, altitudeMeters, latitudeMeters);
-        }
-
-        /// <summary>
-        /// Converts the <see cref="GeoCoordinate"/> to a properly formatted WGS84 string.
-        /// </summary>
-        /// <param name="coordinate">
-        /// The GeoCoordinate to convert.
-        /// </param>
-        /// <returns>
-        /// The WGS84 string.
-        /// </returns>
-        static public string ToWGS84String(this Geoposition coordinate)
-        {
-            return string.Format("{0}, {1}", coordinate.Latitude, coordinate.Longitude);
         }
 
         /// <summary>

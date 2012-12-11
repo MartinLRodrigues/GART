@@ -23,7 +23,6 @@
 
 using System;
 #if WP7
-using Geoposition = System.Device.Location.GeoCoordinate;
 using Microsoft.Phone.Controls.Maps.Platform;
 using Microsoft.Xna.Framework;
 using System.Device.Location;

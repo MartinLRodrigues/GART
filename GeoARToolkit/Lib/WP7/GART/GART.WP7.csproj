@@ -67,6 +67,7 @@
     <Compile Include="BaseControls\IOrientationAware.cs" />
     <Compile Include="Controls\VideoPreview.cs" />
     <Compile Include="Controls\WorldViewItem.cs" />
+    <Compile Include="Converters\LocationGeoCoordinateConverter.cs" />
     <Compile Include="Converters\PercentBingZoomConverter.cs" />
     <Compile Include="Converters\UnknownGeoCoordinateConverter.cs">
       <SubType>Code</SubType>

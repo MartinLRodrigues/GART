@@ -24,23 +24,24 @@
 using System.Windows;
 
 #if WP7
-using System.Device.Location;
-using Geoposition = System.Device.Location.GeoCoordinate;
-using System.Windows.Controls;
-using System.Windows.Media;
 using Matrix = Microsoft.Xna.Framework.Matrix;
 using Microsoft.Phone.Controls;
+using Microsoft.Phone.Controls.Maps.Platform;
+using System.Device.Location;
+using System.Windows.Controls;
+using System.Windows.Media;
 #else
+using Bing.Maps;
 using Windows.Devices.Geolocation;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
 #endif
 
-using System.ComponentModel;
+using GART.BaseControls;
 using GART.Data;
 using System.Collections.ObjectModel;
-using GART.BaseControls;
+using System.ComponentModel;
 
 namespace GART.Controls
 {
@@ -88,7 +89,7 @@ namespace GART.Controls
         /// <summary>
         /// Identifies the <see cref="Location"/> dependency property.
         /// </summary>
-        static public readonly DependencyProperty LocationProperty = DependencyProperty.Register("Location", typeof(Geoposition), typeof(ARItemsView), new PropertyMetadata(ARDefaults.DefaultStartLocation, OnLocationChanged));
+        static public readonly DependencyProperty LocationProperty = DependencyProperty.Register("Location", typeof(Location), typeof(ARItemsView), new PropertyMetadata(ARDefaults.DefaultStartLocation, OnLocationChanged));
 
         private static void OnLocationChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
@@ -276,11 +277,11 @@ namespace GART.Controls
         #if WP7
         [Category("AR")]
         #endif
-        public Geoposition Location
+        public Location Location
         {
             get
             {
-                return (Geoposition)GetValue(LocationProperty);
+                return (Location)GetValue(LocationProperty);
             }
             set
             {

@@ -21,80 +21,57 @@
  ******************************************************************************/
 #endregion // License
 
-#if WP7
-using Microsoft.Phone.Controls.Maps.Platform;
-using Matrix = Microsoft.Xna.Framework.Matrix;
+using System;
+using System.Net;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Documents;
+using System.Windows.Ink;
+using System.Windows.Input;
 using System.Windows.Media;
-#else
-using Bing.Maps;
-using Windows.Devices.Geolocation;
-using Windows.UI.Xaml.Media;
-#endif
-
-using GART.BaseControls;
-using System.ComponentModel;
+using System.Windows.Media.Animation;
+using System.Windows.Shapes;
+using System.Windows.Data;
+using Microsoft.Xna.Framework;
+using System.Device.Location;
+using Microsoft.Phone.Controls.Maps.Platform;
 using GART.Data;
 
-namespace GART.Controls
+namespace GART.Converters
 {
     /// <summary>
-    /// The interface for a view that renders augmented reality data.
+    /// Allows the Bing map control to deal with GeoCoordinates that are unknown.
     /// </summary>
-    public interface IARView : IOrientationAware
+    /// <remarks>
+    /// This converter works by replacing any Unknown GeoCoordinate with the GeoCoordinate for the North Pole during binding. If an item should not 
+    /// be displayed when its GeoCoordinate is unknown, the <see cref="UnknownGeoVisibilityConverter"/> in combination with this converter.
+    /// </remarks>
+    public class LocationGeoCoordinateConverter : IValueConverter
     {
-        /// <summary>
-        /// Gets or sets a matrix that represents where the user is looking.
-        /// </summary>
-        /// <value>
-        /// A matrix that represents where the user is looking.
-        /// </value>
-        #if WP7
-        [Category("AR")]
-        #endif // WP7
-        Matrix Attitude { get; set; }
+        public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            // Validate
+            if (!(value is Location)) { throw new InvalidOperationException("Only Location is supported as a source."); }
+            if (targetType != typeof(GeoCoordinate)) { throw new InvalidOperationException("Only GeoCoordinate is supported as the target type"); }
 
-        /// <summary>
-        /// Gets or sets the direction the user is looking in degrees.
-        /// </summary>
-        /// <value>
-        /// The direction the user is looking in degrees.
-        /// </value>
-        #if WP7
-        [Category("AR")]
-        #endif // WP7
-        double AttitudeHeading { get; set; }
+            // Cast to proper types
+            var starting = (Location)value;
 
-        /// <summary>
-        /// Gets or sets the location of the user in Geo space.
-        /// </summary>
-        /// <value>
-        /// The location of the user in Geo space.
-        /// </value>
-        #if WP7
-        [Category("AR")]
-        #endif // WP7
-        Location Location { get; set; }
+            // Return using built-in conversion
+            return (GeoCoordinate)starting;
+        }
 
-        /// <summary>
-        /// Gets or sets the direction the user is traveling in degrees.
-        /// </summary>
-        /// <value>
-        /// The direction the user is traveling in degrees.
-        /// </value>
-        #if WP7
-        [Category("AR")]
-        #endif // WP7
-        double TravelHeading { get; set; }
+        public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            // Validate
+            if (!(value is GeoCoordinate)) { throw new InvalidOperationException("Only GeoCoordinate is supported as a source."); }
+            if (targetType != typeof(Location)) { throw new InvalidOperationException("Only Location is supported as the target type"); }
 
-        /// <summary>
-        /// Gets or sets a brush that represents the video feed from the camera.
-        /// </summary>
-        /// <value>
-        /// A brush that represents the video feed from the camera.
-        /// </value>
-        #if WP7
-        [Category("AR")]
-        #endif // WP7
-        Brush Video { get; set; }
+            // Cast to proper types
+            var starting = (GeoCoordinate)value;
+
+            // Return using built-in conversion
+            return (Location)starting;
+        }
     }
 }
