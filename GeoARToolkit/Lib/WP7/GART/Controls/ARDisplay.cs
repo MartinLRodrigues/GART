@@ -328,6 +328,10 @@ namespace GART.Controls
         #else
         private async Task StartCamera()
         {
+            if (videoSource == null)
+            {
+                videoSource = new Windows.Media.Capture.MediaCapture();
+            }
             await videoSource.InitializeAsync();
         }
         #endif
@@ -377,7 +381,7 @@ namespace GART.Controls
                 {
                     motion = new Motion();
                     motion.TimeBetweenUpdates = TimeSpan.FromMilliseconds(20);
-                    motion.CurrentValueChanged += new EventHandler<SensorReadingEventArgs<MotionReading>>(motion_CurrentValueChanged);
+                    motion.CurrentValueChanged += motion_CurrentValueChanged;
                 }
 
                 // Try to start the Motion API.
@@ -398,6 +402,7 @@ namespace GART.Controls
             #else
 
             motion = Inclinometer.GetDefault();
+            motion.ReportInterval = 20;
             motion.ReadingChanged += motion_ReadingChanged;
 
             #endif
@@ -405,24 +410,39 @@ namespace GART.Controls
 
         private void StopCamera()
         {
+            #if WP7
             if (photoCamera != null)
             {
                 photoCamera.Dispose();
                 photoCamera = null;
             }
+            #else
+            VideoSource = null;
+            #endif
         }
 
         private void StopLocation()
         {
+            location.PositionChanged -= location_PositionChanged;
+
+            #if WP7
             location.Stop();
             location.Dispose();
-            location = null;
+            #endif
+            
+            Location = null;
         }
 
         private void StopMotion()
         {
+            #if WP7
+            motion.CurrentValueChanged -= motion_CurrentValueChanged;
             motion.Stop();
             motion.Dispose();
+            #else
+            motion.ReadingChanged -= motion_ReadingChanged;
+            #endif
+
             motion = null;
         }
         #endregion // Internal Methods
@@ -990,14 +1010,15 @@ namespace GART.Controls
             }
         }
 
-        #if WP7
         /// <summary>
         /// Gets or sets the video source for the camera. This is a dependency property.
         /// </summary>
         /// <value>
         /// The video source for the camera.
         /// </value>
+        #if WP7
         [Category("AR")]
+        #endif
         public VideoSource VideoSource
         {
             get
@@ -1009,7 +1030,6 @@ namespace GART.Controls
                 SetValue(VideoSourceProperty, value);
             }
         }
-        #endif
 
         /// <summary>
         /// Gets the collection of child views associated with this display.
