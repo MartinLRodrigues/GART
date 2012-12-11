@@ -24,12 +24,13 @@
 using System;
 #if WP7
 using Microsoft.Phone.Controls.Maps.Platform;
-using Microsoft.Xna.Framework;
 using System.Device.Location;
 #else
 using Bing.Maps;
 using Windows.Devices.Geolocation;
 #endif
+
+using Microsoft.Xna.Framework;
 
 namespace GART.Data
 {

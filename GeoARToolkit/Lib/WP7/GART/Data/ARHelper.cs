@@ -24,11 +24,11 @@
 #if WP7
 using System.Device.Location;
 using Microsoft.Phone.Controls.Maps.Platform;
-using Microsoft.Xna.Framework;
 #else
 using Bing.Maps;
 #endif
 
+using Microsoft.Xna.Framework;
 using System;
 
 namespace GART.Data
@@ -41,7 +41,32 @@ namespace GART.Data
         #endregion // Constants
 
         /// <summary>
-        /// Calculates the distance between two points in geo space.
+        /// Calculates the direct distance between two points.
+        /// </summary>
+        /// <param name="a">
+        /// The first point
+        /// </param>
+        /// <param name="b">
+        /// The second point
+        /// </param>
+        /// <returns>
+        /// The direct distance between the two points.
+        /// </returns>
+        static public double DistanceTo(this Location here, Location there)
+        {
+            var r = 6371;
+            var dLat = (there.Latitude - here.Latitude).ToRadian();
+            var dLon = (there.Longitude - here.Longitude).ToRadian();
+            var a = Math.Sin(dLat / 2) * Math.Sin(dLat / 2) +
+                    Math.Cos(here.Latitude.ToRadian()) * Math.Cos(there.Latitude.ToRadian()) *
+                    Math.Sin(dLon / 2) * Math.Sin(dLon / 2);
+            var c = 2 * Math.Asin(Math.Min(1, Math.Sqrt(a)));
+            var d = r * c;
+            return d * 1000;
+        }
+
+        /// <summary>
+        /// Calculates the distance between two points in 3D space.
         /// </summary>
         /// <param name="a">
         /// The first point
@@ -56,14 +81,13 @@ namespace GART.Data
         /// This method assumes 1 3D unit = 1 meter. This method is also not incredibly accurate 
         /// but it's accurate enough for the scales used in most AR applications.
         /// </remarks>
-        static public Vector3 DistanceBetween(Location a, Location b)
+        static public Vector3 DistanceTo3D(this Location a, Location b)
         {
             // Use GeoCoordinate provided methods to calculate distance. Use 
             // same longitude on both points to calculate latitude distance and 
             // use same latitude on both points to calculate longitude distance.
-            GeoCoordinate a2 = a;
-            float latitudeMeters = (float)a2.GetDistanceTo(new GeoCoordinate(b.Latitude, a.Longitude));
-            float longitudeMeters = (float)a2.GetDistanceTo(new GeoCoordinate(a.Latitude, b.Longitude));
+            float latitudeMeters = (float)a.DistanceTo(new Location() { Latitude = b.Latitude, Longitude = a.Longitude });
+            float longitudeMeters = (float)a.DistanceTo(new Location() { Latitude = a.Latitude, Longitude = b.Longitude });
 
             // Invert the distance sign if necessary to account for direction 
             if (a.Latitude < b.Latitude)
@@ -75,17 +99,33 @@ namespace GART.Data
                 longitudeMeters *= -1;
             }
 
-            // Now calculate the altitude difference, but only if both sides of the equation have altitudes
             float altitudeMeters = 0f;
+            #if WP7
+            // Now calculate the altitude difference, but only if both sides of the equation have altitudes
             if ((!a.Altitude.Equals(Double.NaN)) && (!b.Altitude.Equals(Double.NaN)))
             {
                 altitudeMeters = (float)(b.Altitude - a.Altitude);
             }
+            #endif
 
             // Return the new point
             return new Vector3(longitudeMeters, altitudeMeters, latitudeMeters);
         }
 
+        /// <summary>
+        /// Converts a degree to a radian.
+        /// </summary>
+        /// <param name="val">
+        /// The degree to convert.
+        /// </param>
+        /// <returns>
+        /// The resulting radian.
+        /// </returns>
+        static public double ToRadian(this double val)
+        {
+            return (Math.PI / 180) * val;
+        }
+        
         /// <summary>
         /// Converts the <see cref="GeoCoordinate"/> to a properly formatted WGS84 string.
         /// </summary>
@@ -116,7 +156,7 @@ namespace GART.Data
             // When we add 3D rendering we will need to allow our position in 3D space 
             // to change, which will cause the calculations below to change as well.
 
-            item.WorldLocation = ARHelper.DistanceBetween(settings.View.Location, item.GeoLocation);
+            item.WorldLocation = ARHelper.DistanceTo3D(settings.View.Location, item.GeoLocation);
         }
 
         /// <summary>

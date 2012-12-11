@@ -78,7 +78,7 @@ namespace SimpleAR
                     {
                         Latitude = current.Latitude + ((double)rand.Next(-60, 60)) / 100000,
                         Longitude = current.Longitude + ((double)rand.Next(-60, 60)) / 100000,
-                        Altitude = current.Altitude
+                        Altitude = Double.NaN // NaN will keep it on the horizon
                     };
 
                 AddLabel(offset, "Location " + i);
