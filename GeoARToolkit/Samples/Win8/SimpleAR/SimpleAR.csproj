@@ -4,22 +4,22 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>8.0.30703</ProductVersion>
-    <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{AEB5E2AE-4ADE-45EA-BB17-3AA73EAFD38D}</ProjectGuid>
-    <OutputType>Library</OutputType>
+    <ProjectGuid>{D2603EB8-807A-4679-88EB-8A37A90B0CFA}</ProjectGuid>
+    <OutputType>AppContainerExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>GART</RootNamespace>
-    <AssemblyName>GART</AssemblyName>
+    <RootNamespace>SimpleAR</RootNamespace>
+    <AssemblyName>SimpleAR</AssemblyName>
     <DefaultLanguage>en-US</DefaultLanguage>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{BC8A1FFA-BEE3-4634-8014-F334798102B3};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <PackageCertificateKeyFile>SimpleAR_TemporaryKey.pfx</PackageCertificateKeyFile>
     <SccProjectName>SAK</SccProjectName>
     <SccLocalPath>SAK</SccLocalPath>
     <SccAuxPath>SAK</SccAuxPath>
     <SccProvider>SAK</SccProvider>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -29,6 +29,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
@@ -104,100 +105,57 @@
   </PropertyGroup>
   <ItemGroup>
     <!-- A reference to the entire .Net Framework and Windows SDK are automatically included -->
-    <SDKReference Include="Bing.Maps.Xaml, Version=1.0">
-      <Name>Bing Maps for C#, C++, or Visual Basic</Name>
-    </SDKReference>
-    <SDKReference Include="Microsoft.VCLibs, version=11.0">
-      <Name>Microsoft Visual C++ Runtime Package</Name>
-    </SDKReference>
+    <ProjectReference Include="..\..\..\..\..\..\..\Documents\GitHub\MonoGame\MonoGame.Framework\MonoGame.Framework.Windows8.csproj">
+      <Project>{0518563C-ACCA-4A14-8C5D-DDBE93E2605F}</Project>
+      <Name>MonoGame.Framework.Windows8</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\Lib\Win8\GART.Win8\GART.Win8.csproj">
+      <Project>{AEB5E2AE-4ADE-45EA-BB17-3AA73EAFD38D}</Project>
+      <Name>GART.Win8</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\..\WP7\GART\BaseControls\ARItemsView.cs">
-      <Link>BaseControls\ARItemsView.cs</Link>
+    <Compile Include="App.xaml.cs">
+      <DependentUpon>App.xaml</DependentUpon>
     </Compile>
-    <Compile Include="..\..\WP7\GART\BaseControls\ARRotateView.cs">
-      <Link>BaseControls\ARRotateView.cs</Link>
-    </Compile>
-    <Compile Include="..\..\WP7\GART\BaseControls\ARView.cs">
-      <Link>BaseControls\ARView.cs</Link>
-    </Compile>
-    <Compile Include="..\..\WP7\GART\BaseControls\IARItemsView.cs">
-      <Link>BaseControls\IARItemsView.cs</Link>
-    </Compile>
-    <Compile Include="..\..\WP7\GART\BaseControls\IARView.cs">
-      <Link>BaseControls\IARView.cs</Link>
-    </Compile>
-    <Compile Include="..\..\WP7\GART\BaseControls\IOrientationAware.cs">
-      <Link>BaseControls\IOrientationAware.cs</Link>
-    </Compile>
-    <Compile Include="..\..\WP7\GART\Controls\ARDisplay.cs">
-      <Link>Controls\ARDisplay.cs</Link>
-    </Compile>
-    <Compile Include="..\..\WP7\GART\Controls\HeadingIndicator.cs">
-      <Link>Controls\HeadingIndicator.cs</Link>
-    </Compile>
-    <Compile Include="..\..\WP7\GART\Controls\OverheadMap.cs">
-      <Link>Controls\OverheadMap.cs</Link>
-    </Compile>
-    <Compile Include="..\..\WP7\GART\Controls\VideoPreview.cs">
-      <Link>Controls\VideoPreview.cs</Link>
-    </Compile>
-    <Compile Include="..\..\WP7\GART\Controls\WorldView.cs">
-      <Link>Controls\WorldView.cs</Link>
-    </Compile>
-    <Compile Include="..\..\WP7\GART\Controls\WorldViewItem.cs">
-      <Link>Controls\WorldViewItem.cs</Link>
-    </Compile>
-    <Compile Include="..\..\WP7\GART\Converters\PercentBingZoomConverter.cs">
-      <Link>Converters\PercentBingZoomConverter.cs</Link>
-    </Compile>
-    <Compile Include="..\..\WP7\GART\Converters\UnknownGeoVisibilityConverter.cs">
-      <Link>Converters\UnknownGeoVisibilityConverter.cs</Link>
-    </Compile>
-    <Compile Include="..\..\WP7\GART\Data\ARDefaults.cs">
-      <Link>Data\ARDefaults.cs</Link>
-    </Compile>
-    <Compile Include="..\..\WP7\GART\Data\ARHelper.cs">
-      <Link>Data\ARHelper.cs</Link>
-    </Compile>
-    <Compile Include="..\..\WP7\GART\Data\ARItem.cs">
-      <Link>Data\ARItem.cs</Link>
-    </Compile>
-    <Compile Include="..\..\WP7\GART\Data\ARValidators.cs">
-      <Link>Data\ARValidators.cs</Link>
-    </Compile>
-    <Compile Include="..\..\WP7\GART\Data\ExpressionExtensions.cs">
-      <Link>Data\ExpressionExtensions.cs</Link>
-    </Compile>
-    <Compile Include="..\..\WP7\GART\Data\GeoCodeCalc.cs">
-      <Link>Data\GeoCodeCalc.cs</Link>
-    </Compile>
-    <Compile Include="..\..\WP7\GART\Data\GeoExtensions.cs">
-      <Link>Data\GeoExtensions.cs</Link>
-    </Compile>
-    <Compile Include="..\..\WP7\GART\Data\ItemCalculationSettings.cs">
-      <Link>Data\ItemCalculationSettings.cs</Link>
-    </Compile>
-    <Compile Include="..\..\WP7\GART\Data\ObservableObject.cs">
-      <Link>Data\ObservableObject.cs</Link>
-    </Compile>
-    <Compile Include="..\..\WP7\GART\ServiceErrorEventArgs.cs">
-      <Link>ServiceErrorEventArgs.cs</Link>
+    <Compile Include="MainPage.xaml.cs">
+      <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\..\..\..\Documents\GitHub\MonoGame\MonoGame.Framework\MonoGame.Framework.Windows8.csproj">
-      <Project>{0518563c-acca-4a14-8c5d-ddbe93e2605f}</Project>
-      <Name>MonoGame.Framework.Windows8</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup />
-  <ItemGroup>
-    <Page Include="Themes\Generic.xaml">
+    <AppxManifest Include="Package.appxmanifest">
       <SubType>Designer</SubType>
+    </AppxManifest>
+    <None Include="SimpleAR_TemporaryKey.pfx" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Assets\Logo.png" />
+    <Content Include="Assets\SmallLogo.png" />
+    <Content Include="Assets\SplashScreen.png" />
+    <Content Include="Assets\StoreLogo.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <ApplicationDefinition Include="App.xaml">
       <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </ApplicationDefinition>
+    <Page Include="Common\StandardStyles.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
+    <Page Include="MainPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <SDKReference Include="Bing.Maps.Xaml, Version=1.0">
+      <Name>Bing.Maps.Xaml</Name>
+    </SDKReference>
+    <SDKReference Include="Microsoft.VCLibs, version=11.0">
+      <Name>Microsoft Visual C++ Runtime Package</Name>
+    </SDKReference>
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '11.0' ">
     <VisualStudioVersion>11.0</VisualStudioVersion>
