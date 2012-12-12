@@ -21,21 +21,15 @@
  ******************************************************************************/
 #endregion // License
 
-using System;
-using System.Net;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Documents;
-using System.Windows.Ink;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Animation;
-using System.Windows.Shapes;
+#if WP7
+using Culture = System.Globalization.CultureInfo;
 using System.Windows.Data;
-using Microsoft.Xna.Framework;
-using System.Device.Location;
-using Microsoft.Phone.Controls.Maps.Platform;
-using GART.Data;
+#else
+using Culture = System.String;
+using Windows.UI.Xaml.Data;
+#endif
+
+using System;
 
 namespace GART.Converters
 {
@@ -49,7 +43,7 @@ namespace GART.Converters
         private const double MaxZoomLevel = 21;
         #endregion // Constants
 
-        public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        public object Convert(object value, Type targetType, object parameter, Culture culture)
         {
             // Validate
             if (!(value is double)) { throw new InvalidOperationException("Only double is supported as a source."); }
@@ -71,7 +65,7 @@ namespace GART.Converters
             return bingZoom;
         }
 
-        public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        public object ConvertBack(object value, Type targetType, object parameter, Culture culture)
         {
             // Validate
             if (!(value is double)) { throw new InvalidOperationException("Only double is supported as a source."); }

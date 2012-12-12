@@ -1,14 +1,8 @@
-﻿using System;
-using System.Net;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Documents;
-using System.Windows.Ink;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Animation;
-using System.Windows.Shapes;
+﻿#if WP7
 using Microsoft.Phone.Controls.Maps.Platform;
+#else
+using Bing.Maps;
+#endif
 
 namespace GART
 {
@@ -16,7 +10,11 @@ namespace GART
     {
         static public bool IsUnknown(this Location location)
         {
+            #if WP7
             return (location.Latitude == 0 && location.Longitude == 0 && location.Altitude == 0);
+            #else
+            return (location.Latitude == 0 && location.Longitude == 0);
+            #endif
         }
     }
 }

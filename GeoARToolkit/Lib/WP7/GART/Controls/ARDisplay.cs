@@ -183,7 +183,7 @@ namespace GART.Controls
         #else
         private Geolocator location;
         private Inclinometer motion;
-        private VideoSource videoSource = new VideoSource();
+        private VideoSource videoSource;
         #endif
 
         private bool servicesRunning;
@@ -330,11 +330,19 @@ namespace GART.Controls
         #else
         private async Task StartCamera()
         {
-            if (videoSource == null)
+            if (VideoSource == null)
             {
-                videoSource = new Windows.Media.Capture.MediaCapture();
+                VideoSource = new Windows.Media.Capture.MediaCapture();
+                try
+                {
+                    await VideoSource.InitializeAsync();
+                }
+                catch (Exception ex)
+                {
+                    OnServiceError(new ServiceErrorEventArgs(ARService.Camera, ex));
+                }
             }
-            await videoSource.InitializeAsync();
+            await VideoSource.StartPreviewAsync();
         }
         #endif
 
@@ -404,8 +412,15 @@ namespace GART.Controls
             #else
 
             motion = Inclinometer.GetDefault();
-            motion.ReportInterval = 20;
-            motion.ReadingChanged += motion_ReadingChanged;
+            if (motion != null)
+            {
+                motion.ReportInterval = 20;
+                motion.ReadingChanged += motion_ReadingChanged;
+            }
+            else
+            {
+                OnServiceError(new ServiceErrorEventArgs(ARService.Motion, new InvalidOperationException("Inclinometer is not supported on this device.")));
+            }
 
             #endif
         }

@@ -21,27 +21,25 @@
  ******************************************************************************/
 #endregion // License
 
-using System;
-using System.Net;
+#if WP7
+using Culture = System.Globalization.CultureInfo;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Documents;
-using System.Windows.Ink;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Animation;
-using System.Windows.Shapes;
 using System.Windows.Data;
-using Microsoft.Xna.Framework;
-using System.Device.Location;
 using Microsoft.Phone.Controls.Maps.Platform;
-using GART.Data;
+#else
+using Bing.Maps;
+using Culture = System.String;
+using Windows.UI.Xaml;
+using Windows.UI.Xaml.Data;
+#endif
+
+using System;
 
 namespace GART.Converters
 {
     public class UnknownGeoVisibilityConverter : IValueConverter
     {
-        public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        public object Convert(object value, Type targetType, object parameter, Culture culture)
         {
             // Validate
             if (!(value is Location)) { throw new InvalidOperationException("Only Location is supported as a source."); }
@@ -61,7 +59,7 @@ namespace GART.Converters
             }
         }
 
-        public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        public object ConvertBack(object value, Type targetType, object parameter, Culture culture)
         {
             throw new NotImplementedException();
         }

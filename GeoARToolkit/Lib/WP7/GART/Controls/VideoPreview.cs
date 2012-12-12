@@ -21,17 +21,72 @@
  ******************************************************************************/
 #endregion // License
 
+#if !WP7
+using Windows.UI.Xaml.Controls;
+#endif
+
+using System;
+
 namespace GART.Controls
 {
     public class VideoPreview : ARView
     {
+        #region Static Version
+        #region Part Names
+        static internal class PartNames
+        {
+            public const string CaptureElement = "CaptureElement";
+        }
+        #endregion // Part Names
+        #endregion // Static Version
+
         #region Instance Version
+
+        #region Member Variables
+        #if !WP7
+        private CaptureElement captureElement;
+        #endif
+        #endregion // Member Variables
+
         #region Constructors
         public VideoPreview()
         {
             DefaultStyleKey = typeof(VideoPreview);
         }
         #endregion // Constructors
+
+
+        #region Overrides / Event Handlers
+        #if !WP7
+        protected override void OnApplyTemplate()
+        {
+            base.OnApplyTemplate();
+
+            captureElement = GetTemplateChild(PartNames.CaptureElement) as CaptureElement;
+
+            // Validate the template
+            if (captureElement == null)
+            {
+                throw new InvalidOperationException(string.Format("{0} template is invalid. A {1} named {2} must be supplied.", GetType().Name, typeof(CaptureElement).Name, PartNames.CaptureElement));
+            }
+
+            // Set video source
+            captureElement.Source = VideoSource;
+        }
+
+        protected override void OnVideoSourceChanged(Windows.UI.Xaml.DependencyPropertyChangedEventArgs e)
+        {
+            base.OnVideoSourceChanged(e);
+            
+            // If we have a capture element, update it.
+            if (captureElement != null)
+            {
+                captureElement.Source = VideoSource;
+            }
+        }
+        #endif
+        #endregion // Overrides / Event Handlers
+
         #endregion // Instance Version
     }
 }
