@@ -24,10 +24,14 @@
 #if WP7
 using System.Windows.Media;
 using Microsoft.Phone.Controls.Maps;
+using Credentials = Microsoft.Phone.Controls.Maps.CredentialsProvider;
 using Microsoft.Phone.Controls.Maps.Design;
 #else
 using Bing.Maps;
+using Credentials = System.String;
+using Windows.Foundation;
 using Windows.UI.Xaml;
+using Windows.UI.Xaml.Media;
 #endif
 
 using GART.Data;
@@ -35,6 +39,8 @@ using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Windows;
+
+
 
 
 
@@ -66,7 +72,7 @@ namespace GART.Controls
 
         #region Instance Version
         #region Member Variables
-        private CredentialsProvider credentialsProvider;
+        private Credentials credentials;
         private ObservableCollection<ARItem> arItems;
         private Map map;
         #endregion // Member Variables
@@ -78,12 +84,17 @@ namespace GART.Controls
 
             // Subscribe to LayoutUpdated so we can clip the map correctly.
             // This is necessary because we have to make the map larger than our bounds so rotation works.
-            this.LayoutUpdated += new EventHandler(OverheadMap_LayoutUpdated);
+            this.LayoutUpdated += OverheadMap_LayoutUpdated;
         }
         #endregion // Constructors
 
         #region Overrides / Event Handlers
+
+        #if WP7
         public override void OnApplyTemplate()
+        #else
+        protected override void OnApplyTemplate()
+        #endif
         {
             base.OnApplyTemplate();
 
@@ -102,7 +113,11 @@ namespace GART.Controls
             //map.ManipulationCompleted += new EventHandler<System.Windows.Input.ManipulationCompletedEventArgs>(map_ManipulationCompleted);
 
             // Connect credentials
-            map.CredentialsProvider = credentialsProvider;
+            #if WP7
+            map.CredentialsProvider = credentials;
+            #else
+            map.Credentials = credentials;
+            #endif
 
             // Connect data
             map.DataContext = arItems;
@@ -122,8 +137,11 @@ namespace GART.Controls
         //{
         //    System.Diagnostics.Debug.WriteLine("Manip Completed");
         //}
-
+        #if WP7
         private void OverheadMap_LayoutUpdated(object sender, EventArgs e)
+        #else
+        private void OverheadMap_LayoutUpdated(object sender, object e)
+        #endif
         {
             // This method gets called a lot. Check to see that we actually need to update 
             // before we new up objects.
@@ -181,18 +199,22 @@ namespace GART.Controls
         [Category("Map")]
         [TypeConverter(typeof(ApplicationIdCredentialsProviderConverter))]
         #endif
-        public CredentialsProvider CredentialsProvider
+        public Credentials Credentials
         {
             get
             {
-                return credentialsProvider;
+                return credentials;
             }
             set
             {
-                credentialsProvider = value;
+                credentials = value;
                 if (map != null)
                 {
+                    #if WP7
                     map.CredentialsProvider = value;
+                    #else
+                    map.Credentials = value;
+                    #endif
                 }
             }
         }

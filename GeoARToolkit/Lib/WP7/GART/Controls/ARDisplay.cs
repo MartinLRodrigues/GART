@@ -38,11 +38,13 @@ using System.Threading.Tasks;
 using Windows.Devices.Geolocation;
 using Windows.Devices.Sensors;
 using Motion = Windows.Devices.Sensors.Inclinometer;
+using Windows.Media.Capture;
 using VideoSource = Windows.Media.Capture.MediaCapture;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Markup;
 using Windows.UI.Xaml.Media;
+
 #endif 
 
 using GART.BaseControls;
@@ -709,8 +711,9 @@ namespace GART.Controls
 
             // Need to handle videobrush rotation as well:
             ControlOrientation newOrientation = (ControlOrientation)(e.NewValue);
-            CompositeTransform orientationRotation; 
 
+            #if WP7
+            CompositeTransform orientationRotation; 
             switch (newOrientation)
             {
                 case ControlOrientation.LandscapeLeft:
@@ -728,6 +731,28 @@ namespace GART.Controls
 
             // Update our dependency property
             VideoSource.RelativeTransform = orientationRotation;
+
+            #else
+            VideoRotation orientationRotation = VideoRotation.None;
+            switch (newOrientation)
+            {
+                case ControlOrientation.PortraitDown:
+                    orientationRotation = VideoRotation.Clockwise90Degrees;
+                    break;
+                case ControlOrientation.PortraitUp:
+                    orientationRotation = VideoRotation.Clockwise270Degrees;
+                    break;
+                case ControlOrientation.LandscapeLeft:
+                    orientationRotation = VideoRotation.None;
+                    break;
+
+                case ControlOrientation.LandscapeRight:
+                    orientationRotation = VideoRotation.Clockwise180Degrees;
+                    break;
+            } // end switch 
+
+            VideoSource.SetPreviewRotation(orientationRotation);
+            #endif
         }
         #endregion // Overridables / Event Triggers
 

@@ -23,7 +23,6 @@
 
 #if WP7
 using Microsoft.Phone.Controls.Maps.Platform;
-using Matrix = Microsoft.Xna.Framework.Matrix;
 using System.Windows.Media;
 using VideoSource = System.Windows.Media.Brush;
 #else
@@ -34,8 +33,9 @@ using VideoSource = Windows.Media.Capture.MediaCapture;
 #endif
 
 using GART.BaseControls;
-using System.ComponentModel;
 using GART.Data;
+using Matrix = Microsoft.Xna.Framework.Matrix;
+using System.ComponentModel;
 
 namespace GART.Controls
 {
