@@ -39,6 +39,7 @@ using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Windows;
+using GART.Converters;
 
 
 
@@ -72,9 +73,14 @@ namespace GART.Controls
 
         #region Instance Version
         #region Member Variables
-        private Credentials credentials;
         private ObservableCollection<ARItem> arItems;
         private Map map;
+
+        #if WP7
+        private Credentials credentials;
+        #else
+        private Credentials credentials = "";
+        #endif
         #endregion // Member Variables
 
         #region Constructors
@@ -106,12 +112,6 @@ namespace GART.Controls
                 throw new InvalidOperationException(string.Format("{0} template is invalid. A {1} named {2} must be supplied.", GetType().Name, typeof(Map).Name, PartNames.Map));
             }
 
-            // TODO: Keep the map from panning (the following does not work???)
-            //map.MapPan += new EventHandler<MapDragEventArgs>(map_MapPan);
-            //map.ManipulationStarted += new EventHandler<System.Windows.Input.ManipulationStartedEventArgs>(map_ManipulationStarted);
-            //map.ManipulationDelta += new EventHandler<System.Windows.Input.ManipulationDeltaEventArgs>(map_ManipulationDelta);
-            //map.ManipulationCompleted += new EventHandler<System.Windows.Input.ManipulationCompletedEventArgs>(map_ManipulationCompleted);
-
             // Connect credentials
             #if WP7
             map.CredentialsProvider = credentials;
@@ -121,6 +121,13 @@ namespace GART.Controls
 
             // Connect data
             map.DataContext = arItems;
+        
+            #if !WP7
+            // Set initial values for properties that can't be data bound in Windows 8
+            map.Center = Location;
+            map.ZoomLevel = PercentBingZoomConverter.PercentToMapLevel(ZoomLevel);
+            #endif
+        
         }
 
         //void map_ManipulationCompleted(object sender, System.Windows.Input.ManipulationCompletedEventArgs e)
@@ -158,6 +165,19 @@ namespace GART.Controls
         #endregion // Overrides / Event Handlers
 
         #region Overridables / Event Triggers
+        #if !WP7
+        protected override void OnLocationChanged(DependencyPropertyChangedEventArgs e)
+        {
+            base.OnLocationChanged(e);
+            
+            // The Win8 version of the map control does not allow Center to be data bound
+            if (map != null)
+            {
+                map.Center = Location;
+            }
+        }
+        #endif
+
         /// <summary>
         /// Occurs when the value of the <see cref="ZoomLevel"/> property has changed.
         /// </summary>
@@ -166,6 +186,13 @@ namespace GART.Controls
         /// </param>
         protected virtual void OnZoomLevelChanged(DependencyPropertyChangedEventArgs e)
         {
+            #if !WP7
+            // The Win8 version of the map control does not allow Zoom Level to be data bound
+            if (map != null)
+            {
+                map.ZoomLevel = PercentBingZoomConverter.PercentToMapLevel(ZoomLevel);
+            }
+            #endif
         }
         #endregion // Overridables / Event Triggers
 

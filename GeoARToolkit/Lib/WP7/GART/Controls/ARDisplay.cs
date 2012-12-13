@@ -183,7 +183,6 @@ namespace GART.Controls
         #else
         private Geolocator location;
         private Inclinometer motion;
-        private VideoSource videoSource;
         #endif
 
         private bool servicesRunning;
@@ -332,17 +331,18 @@ namespace GART.Controls
         {
             if (VideoSource == null)
             {
-                VideoSource = new Windows.Media.Capture.MediaCapture();
+                var source = new Windows.Media.Capture.MediaCapture();
                 try
                 {
-                    await VideoSource.InitializeAsync();
+                    await source.InitializeAsync();
+                    VideoSource = source;
+                    await source.StartPreviewAsync();
                 }
                 catch (Exception ex)
                 {
                     OnServiceError(new ServiceErrorEventArgs(ARService.Camera, ex));
                 }
             }
-            await VideoSource.StartPreviewAsync();
         }
         #endif
 

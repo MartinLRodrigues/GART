@@ -11,6 +11,7 @@
     <Grid Background="{StaticResource ApplicationPageBackgroundThemeBrush}">
         <Controls:ARDisplay x:Name="ARDisplay">
             <Controls:VideoPreview />
+            <Controls:OverheadMap Credentials="AhaN4ZBwsGOnuWVfPhEyRh99c3I81NaL6zLEDFQwzQ6IUWP5JwTdjtKxG_aFxArp" />
         </Controls:ARDisplay>
     </Grid>
 </Page>

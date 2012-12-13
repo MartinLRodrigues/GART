@@ -43,15 +43,17 @@ namespace GART.Converters
         private const double MaxZoomLevel = 21;
         #endregion // Constants
 
-        public object Convert(object value, Type targetType, object parameter, Culture culture)
+        /// <summary>
+        /// Converts a percentage to a Bing Maps zoom level.
+        /// </summary>
+        /// <param name="percentZoom">
+        /// The percentage (between 0.0 and 1.0).
+        /// </param>
+        /// <returns>
+        /// The Bing zoom level.
+        /// </returns>
+        static public double PercentToMapLevel(double percentZoom)
         {
-            // Validate
-            if (!(value is double)) { throw new InvalidOperationException("Only double is supported as a source."); }
-            if (targetType != typeof(double)) { throw new InvalidOperationException("Only double is supported as the target type"); }
-
-            // Cast to proper types
-            double percentZoom = (double)value;
-
             // Test range
             if ((percentZoom < 0d) || (percentZoom > 1d)) throw new ArgumentOutOfRangeException("Value should represnt a percent (between 0 and 1).");
 
@@ -65,6 +67,40 @@ namespace GART.Converters
             return bingZoom;
         }
 
+        /// <summary>
+        /// Converts a bing zoom level to a percentage.
+        /// </summary>
+        /// <param name="bingZoom">
+        /// The bing zoom level.
+        /// </param>
+        /// <returns>
+        /// The converted percentage.
+        /// </returns>
+        static public double MapLevelToPercent(double bingZoom)
+        {
+            // Test range
+            if ((bingZoom < MinZoomLevel) || (bingZoom > MaxZoomLevel)) throw new ArgumentOutOfRangeException(string.Format("Value should be between {0} and {1}.", MinZoomLevel, MaxZoomLevel));
+
+            // Divide current by max to get percentage
+            double percentZoom = bingZoom / MaxZoomLevel;
+
+            // Return percentage zoom
+            return percentZoom;
+        }
+
+        public object Convert(object value, Type targetType, object parameter, Culture culture)
+        {
+            // Validate
+            if (!(value is double)) { throw new InvalidOperationException("Only double is supported as a source."); }
+            if (targetType != typeof(double)) { throw new InvalidOperationException("Only double is supported as the target type"); }
+
+            // Cast to proper types
+            double percentZoom = (double)value;
+
+            // Do conversion
+            return PercentToMapLevel(percentZoom);
+        }
+
         public object ConvertBack(object value, Type targetType, object parameter, Culture culture)
         {
             // Validate
@@ -74,14 +110,8 @@ namespace GART.Converters
             // Cast to proper types
             double bingZoom = (double)value;
 
-            // Test range
-            if ((bingZoom < MinZoomLevel) || (bingZoom > MaxZoomLevel)) throw new ArgumentOutOfRangeException(string.Format("Value should be between {0} and {1}.", MinZoomLevel, MaxZoomLevel));
-
-            // Divide current by max to get percentage
-            double percentZoom = bingZoom / MaxZoomLevel;
-
-            // Return percentage zoom
-            return percentZoom;
+            // Do conversion
+            return MapLevelToPercent(bingZoom);
         }
     }
 }

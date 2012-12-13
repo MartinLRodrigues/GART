@@ -24,7 +24,15 @@ namespace SimpleAR
         public MainPage()
         {
             this.InitializeComponent();
+            this.Loaded += MainPage_Loaded;
         }
+
+        void MainPage_Loaded(object sender, RoutedEventArgs e)
+        {
+            ARDisplay.StartServices();
+        }
+
+        
 
         /// <summary>
         /// Invoked when this page is about to be displayed in a Frame.
@@ -34,7 +42,7 @@ namespace SimpleAR
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             base.OnNavigatedTo(e);
-            ARDisplay.StartServices();
+            // ARDisplay.StartServices();
         }
 
         protected override void OnNavigatedFrom(NavigationEventArgs e)
