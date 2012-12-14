@@ -1,4 +1,8 @@
-﻿using System;
+﻿using Bing.Maps;
+using GART;
+using GART.Controls;
+using GART.Data;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -21,11 +25,71 @@ namespace SimpleAR
     /// </summary>
     public sealed partial class MainPage : Page
     {
+        #region Member Variables
+        private Random rand = new Random();
+        #endregion // Member Variables
+
         public MainPage()
         {
             this.InitializeComponent();
             this.Loaded += MainPage_Loaded;
         }
+
+
+        #region Internal Methods
+        private void AddLabel(Location location, string label)
+        {
+            // We'll use the specified text for the content and we'll let 
+            // the system automatically project the item into world space
+            // for us based on the Geo location.
+            ARItem item = new ARItem()
+            {
+                Content = label,
+                GeoLocation = location,
+            };
+
+            ARDisplay.ARItems.Add(item);
+        }
+
+        private void AddNearbyLabels()
+        {
+            // Start with the current location
+            var current = ARDisplay.Location;
+
+            // We'll add three Labels
+            for (int i = 0; i < 3; i++)
+            {
+                // Create a new location based on the users location plus
+                // a random offset.
+                Location offset = new Location()
+                {
+                    Latitude = current.Latitude + ((double)rand.Next(-60, 60)) / 100000,
+                    Longitude = current.Longitude + ((double)rand.Next(-60, 60)) / 100000,
+                    // Altitude = Double.NaN // NaN will keep it on the horizon
+                };
+
+                AddLabel(offset, "Location " + i);
+            }
+        }
+
+        /// <summary>
+        /// Switches between rottaing the Heading Indicator or rotating the Map to the current heading.
+        /// </summary>
+        private void SwitchHeadingMode()
+        {
+            if (HeadingIndicator.RotationSource == RotationSource.AttitudeHeading)
+            {
+                HeadingIndicator.RotationSource = RotationSource.North;
+                OverheadMap.RotationSource = RotationSource.AttitudeHeading;
+            }
+            else
+            {
+                OverheadMap.RotationSource = RotationSource.North;
+                HeadingIndicator.RotationSource = RotationSource.AttitudeHeading;
+            }
+        }
+        #endregion // Internal Methods
+
 
         void MainPage_Loaded(object sender, RoutedEventArgs e)
         {
@@ -49,6 +113,26 @@ namespace SimpleAR
         {
             base.OnNavigatedFrom(e);
             ARDisplay.StopServices();
+        }
+
+        private void MapButton_Click(object sender, RoutedEventArgs e)
+        {
+            UIHelper.ToggleVisibility(OverheadMap);
+        }
+
+        private void HeadingButton_Click(object sender, RoutedEventArgs e)
+        {
+            UIHelper.ToggleVisibility(HeadingIndicator);
+        }
+
+        private void WorldButton_Click(object sender, RoutedEventArgs e)
+        {
+            // UIHelper.ToggleVisibility(WorldView);
+        }
+
+        private void RotationButton_Click(object sender, RoutedEventArgs e)
+        {
+            SwitchHeadingMode();
         }
     }
 }

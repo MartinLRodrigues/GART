@@ -21,8 +21,15 @@
  ******************************************************************************/
 #endregion // License
 
+#if WP7
 using System.Windows;
+using Point = System.Windows.Point;
 using System.Windows.Media;
+#else
+using Point = Windows.Foundation.Point;
+using Windows.UI.Xaml;
+using Windows.UI.Xaml.Media;
+#endif
 
 namespace GART
 {
@@ -40,7 +47,7 @@ namespace GART
         static public void SetCenterRotation(UIElement element)
         {
             RotateTransform rt = new RotateTransform();
-            element.RenderTransformOrigin = new System.Windows.Point(0.5, 0.5);
+            element.RenderTransformOrigin = new Point(0.5, 0.5);
             element.RenderTransform = rt;
         }
 

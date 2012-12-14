@@ -7,8 +7,6 @@
   >
 
     <!-- Converters used below -->
-    <converters:PercentBingZoomConverter x:Key="PercentBingZoomConverter" />
-    <converters:UnknownGeoVisibilityConverter x:Key="UnknownGeoVisibilityConverter" />
 
     <!-- Control templates -->
     <Style TargetType="controls:HeadingIndicator">
@@ -42,7 +40,6 @@
     <DataTemplate x:Key="MapShape">
         <TextBlock Text="{Binding Content}" 
                    Foreground="Red" 
-                   Visibility="{Binding GeoLocation, Converter={StaticResource UnknownGeoVisibilityConverter}}"
                    maps:MapLayer.Position="{Binding GeoLocation}" 
                    />
     </DataTemplate>

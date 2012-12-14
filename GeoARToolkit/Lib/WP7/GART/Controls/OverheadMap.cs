@@ -94,6 +94,17 @@ namespace GART.Controls
         }
         #endregion // Constructors
 
+        #region Internal Methods
+        private void UpdateMargin()
+        {
+            if (map != null)
+            {
+                double largest = Math.Max(this.ActualWidth, this.ActualHeight);
+                map.Margin = new Thickness(-largest * 0.3333);
+            }
+        }
+        #endregion // Internal Methods
+
         #region Overrides / Event Handlers
 
         #if WP7
@@ -118,6 +129,9 @@ namespace GART.Controls
             #else
             map.Credentials = credentials;
             #endif
+
+            // Update the margin
+            UpdateMargin();
 
             // Connect data
             map.DataContext = arItems;
@@ -161,6 +175,9 @@ namespace GART.Controls
                 clipGeometry.Rect = new Rect(0, 0, this.ActualWidth, this.ActualHeight);
                 this.Clip = clipGeometry;
             }
+
+            // Update the margin
+            UpdateMargin();
         }
         #endregion // Overrides / Event Handlers
 

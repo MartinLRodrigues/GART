@@ -184,6 +184,10 @@
     <Compile Include="..\..\WP7\GART\ServiceErrorEventArgs.cs">
       <Link>ServiceErrorEventArgs.cs</Link>
     </Compile>
+    <Compile Include="..\..\WP7\GART\UIHelper.cs">
+      <Link>UIHelper.cs</Link>
+    </Compile>
+    <Compile Include="Converters\MarginInflationConverter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

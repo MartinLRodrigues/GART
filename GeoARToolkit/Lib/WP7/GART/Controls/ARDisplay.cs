@@ -67,10 +67,6 @@ namespace GART.Controls
     public class ARDisplay : Grid, IARItemsView
     {
         #region Static Version
-        /// <summary>
-        /// Rotation in degrees needed for items to be rendered in landscape right orientation
-        /// </summary>
-        private static readonly int landscapeRightRotation = 180;
 
         #region Dependency Properties
         /// <summary>
@@ -505,9 +501,18 @@ namespace GART.Controls
         #else
         private void motion_ReadingChanged(Inclinometer sender, InclinometerReadingChangedEventArgs args)
         {
-            // PORT: How do we do setup a rotation matrix like above?
-            // this.Attitude = 
-            this.AttitudeHeading = args.Reading.YawDegrees;
+            // This event arrives on a background thread. Use Dispatcher to call
+            // CurrentValueChanged on the UI thread.
+            #if WP7
+            Dispatcher.BeginInvoke(() =>
+            #else
+            var t = Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
+            #endif 
+                {
+                    // PORT: How do we do setup a rotation matrix? Is it even used?
+                    // this.Attitude = mr.Attitude.RotationMatrix; 
+                    this.AttitudeHeading = args.Reading.YawDegrees;
+                });
         }
         #endif
 
@@ -577,7 +582,7 @@ namespace GART.Controls
             {
                 if (CameraEnabled)
                 {
-                    StartCamera();
+                    var t = StartCamera();
                 }
                 else
                 {
@@ -782,7 +787,7 @@ namespace GART.Controls
 
             if (CameraEnabled)
             {
-                StartCamera();
+                var t = StartCamera();
             }
             if (LocationEnabled)
             {

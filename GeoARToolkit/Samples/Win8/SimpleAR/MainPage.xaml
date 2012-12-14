@@ -7,11 +7,23 @@
     xmlns:Controls="using:GART.Controls"
     x:Class="SimpleAR.MainPage"
     mc:Ignorable="d">
+    <Page.BottomAppBar>
+        <AppBar>
+            <StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
+                <Button x:Name="MapButton" Style="{StaticResource MapAppBarButton}" Click="MapButton_Click"/>
+                <Button x:Name="HeadingButton" AutomationProperties.Name="Heading"  Style="{StaticResource AppBarButtonStyle}" Click="HeadingButton_Click"/>
+                <Button x:Name="WorldButton" AutomationProperties.Name="World"  Style="{StaticResource AppBarButtonStyle}" Click="WorldButton_Click"/>
+                <Button x:Name="RotationButton" AutomationProperties.Name="Rotation"  Style="{StaticResource AppBarButtonStyle}" Click="RotationButton_Click"/>
+            </StackPanel>
+        </AppBar>
+    </Page.BottomAppBar>
 
     <Grid Background="{StaticResource ApplicationPageBackgroundThemeBrush}">
         <Controls:ARDisplay x:Name="ARDisplay">
             <Controls:VideoPreview />
-            <Controls:OverheadMap Credentials="AhaN4ZBwsGOnuWVfPhEyRh99c3I81NaL6zLEDFQwzQ6IUWP5JwTdjtKxG_aFxArp" />
+            <Controls:OverheadMap x:Name="OverheadMap" Credentials="AhaN4ZBwsGOnuWVfPhEyRh99c3I81NaL6zLEDFQwzQ6IUWP5JwTdjtKxG_aFxArp" Visibility="Collapsed" />
+            <Controls:HeadingIndicator x:Name="HeadingIndicator" />
         </Controls:ARDisplay>
+
     </Grid>
 </Page>
