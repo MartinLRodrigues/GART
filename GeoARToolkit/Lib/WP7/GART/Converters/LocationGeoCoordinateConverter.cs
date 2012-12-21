@@ -39,6 +39,9 @@ namespace GART.Converters
     {
         public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
+            // If null just return null
+            if (value == null) return null;
+
             // Validate
             if (!(value is Location)) { throw new InvalidOperationException("Only Location is supported as a source."); }
             if (targetType != typeof(GeoCoordinate)) { throw new InvalidOperationException("Only GeoCoordinate is supported as the target type"); }

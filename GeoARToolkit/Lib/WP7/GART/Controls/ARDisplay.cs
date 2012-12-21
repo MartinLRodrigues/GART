@@ -67,7 +67,13 @@ namespace GART.Controls
     public class ARDisplay : Grid, IARItemsView
     {
         #region Static Version
-
+        #if WP7
+        /// <summary>
+        /// Rotation in degrees needed for items to be rendered in landscape right orientation
+        /// </summary>
+        private static readonly int landscapeRightRotation = 180;
+        #endif
+        
         #region Dependency Properties
         /// <summary>
         /// Identifies the <see cref="ARItems"/> dependency property.
@@ -176,6 +182,7 @@ namespace GART.Controls
         private GeoCoordinateWatcher location;
         private Motion motion;
         private PhotoCamera photoCamera;
+        private ItemCalculationSettings settings;
         #else
         private Geolocator location;
         private Inclinometer motion;
@@ -191,28 +198,35 @@ namespace GART.Controls
             // Create the views collection
             views = new ObservableCollection<IARView>();
 
+            // Create the calculation settings instance
+            settings = new ItemCalculationSettings { View = this };
+
             // Subscribe to events
+            ARItems.CollectionChanged += ItemCollectionChanged;
             views.CollectionChanged += new System.Collections.Specialized.NotifyCollectionChangedEventHandler(views_CollectionChanged);
         }
         #endregion // Constructors
 
         #region Internal Methods
+        private void CalculateItemLocation(ARItem item)
+        {
+            // If a calculation exists, call it
+            if (item.WorldCalculation != null)
+            {
+                item.WorldCalculation(settings, item);
+            }
+        }
+
         private void CalculateItemLocations()
         {
-            // Create the settings instance
-            ItemCalculationSettings settings = new ItemCalculationSettings { View = this };
-
             // Loop through all the items
             for (int i = 0; i < ARItems.Count; i++)
             {
                 // Get the item
                 ARItem item = ARItems[i];
 
-                // If a calculation exists, call it
-                if (item.WorldCalculation != null)
-                {
-                    item.WorldCalculation(settings, item);
-                }
+                // Calculate the single item
+                CalculateItemLocation(item);
             }
         }
 
@@ -357,7 +371,11 @@ namespace GART.Controls
                 // Try to start the Motion API.
                 try
                 {
+                    // Start the service
                     location.Start();
+
+                    // Force a grab of location once
+                    Location = location.Position.Location;
                 }
                 catch (Exception ex)
                 {
@@ -369,6 +387,8 @@ namespace GART.Controls
                 location = new Geolocator();
                 location.MovementThreshold = 0; // TODO: Do we leave this? High battery cost but most accurate AR simulation
                 location.PositionChanged += location_PositionChanged;
+
+                // PORT: Grab location once?
                 
                 #endif
             }
@@ -540,6 +560,18 @@ namespace GART.Controls
         /// </param>
         protected virtual void OnARItemsChanged(DependencyPropertyChangedEventArgs e)
         {
+            // Unsubscribe events from existing collection (if one exists)
+            if (e.OldValue != null)
+            {
+                ((ObservableCollection<ARItem>)e.OldValue).CollectionChanged -= ItemCollectionChanged;
+            }
+
+            // Subscribe to new collection events
+            if (e.NewValue != null)
+            {
+                ((ObservableCollection<ARItem>)e.NewValue).CollectionChanged += ItemCollectionChanged;
+            }
+
             // Calculate the items locations before updating views
             CalculateItemLocations();
 
@@ -551,6 +583,26 @@ namespace GART.Controls
                 {
                     itemsView.ARItems = this.ARItems;
                 }
+            }
+        }
+
+        private void ItemCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            // If a new item was added, replaced or the collection was reset, calculate locations
+            switch (e.Action)
+            {
+                case NotifyCollectionChangedAction.Add:
+                case NotifyCollectionChangedAction.Replace:
+                    // Recalculate added or changed items
+                    for (int i = 0; i < e.NewItems.Count; i++)
+                    {
+                        CalculateItemLocation((ARItem)e.NewItems[i]);
+                    }
+                    break;
+                case NotifyCollectionChangedAction.Reset:
+                    // Recalculate all
+                    CalculateItemLocations();
+                    break;
             }
         }
 
@@ -582,7 +634,11 @@ namespace GART.Controls
             {
                 if (CameraEnabled)
                 {
+                    #if WP7
+                    StartCamera();
+                    #else
                     var t = StartCamera();
+                    #endif
                 }
                 else
                 {
@@ -787,7 +843,11 @@ namespace GART.Controls
 
             if (CameraEnabled)
             {
+                #if WP7
+                StartCamera();
+                #else
                 var t = StartCamera();
+                #endif
             }
             if (LocationEnabled)
             {

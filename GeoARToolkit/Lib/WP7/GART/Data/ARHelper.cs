@@ -102,9 +102,13 @@ namespace GART.Data
             float altitudeMeters = 0f;
             #if WP7
             // Now calculate the altitude difference, but only if both sides of the equation have altitudes
-            if ((!a.Altitude.Equals(Double.NaN)) && (!b.Altitude.Equals(Double.NaN)))
+            if ((!double.IsNaN(a.Altitude)) && (!double.IsNaN(b.Altitude)))
             {
+                // Calculate
                 altitudeMeters = (float)(b.Altitude - a.Altitude);
+
+                // Deal with really small double values getting converted to floats
+                if (float.IsInfinity(altitudeMeters)) { altitudeMeters = 0; }
             }
             #endif
 

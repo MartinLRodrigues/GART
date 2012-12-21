@@ -128,9 +128,6 @@ namespace BingAR
             // Only proceed if the search was a success
             if ((e.Error == null) && (e.Result.ResponseSummary.StatusCode == ResponseStatusCode.Success))
             {
-                // HACK: New collection
-                ObservableCollection<ARItem> items = new ObservableCollection<ARItem>();
-
                 // Clear out existing items
                 ARDisplay.ARItems.Clear();
 
@@ -153,12 +150,9 @@ namespace BingAR
                         };
                         
                         // Add to the collection
-                        items.Add(ri);
+                        ARDisplay.ARItems.Add(ri);
                     }
                 }
-
-                // HACK: New collection
-                ARDisplay.ARItems = items;
             }
         }
 
