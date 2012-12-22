@@ -30,7 +30,15 @@ using Bing.Maps;
 using Windows.Devices.Geolocation;
 #endif
 
+#if NonXna
+using NonXnaUtils;
+using Vector3 = NonXnaUtils.Vector3;
+using Matrix = NonXnaUtils.Matrix;
+#else
 using Microsoft.Xna.Framework;
+using Vector3 = Microsoft.Xna.Framework.Vector3;
+using Matrix = Microsoft.Xna.Framework.Matrix;
+#endif
 
 namespace GART.Data
 {

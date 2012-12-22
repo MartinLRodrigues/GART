@@ -21,6 +21,11 @@
  ******************************************************************************/
 #endregion // License
 
+
+// Uncomment to test win NonXna library
+//#define NonXna
+//
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -36,7 +41,11 @@ using Microsoft.Phone.Controls;
 using System.Device.Location;
 using GART;
 using GART.Data;
+#if NonXna
+using NonXnaUtils;
+#else
 using Microsoft.Xna.Framework;
+#endif
 using BingAR.Bing.Search;
 using Microsoft.Phone.Controls.Maps;
 using BingAR.Data;

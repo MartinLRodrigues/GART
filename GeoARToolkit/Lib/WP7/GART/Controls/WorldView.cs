@@ -35,9 +35,19 @@ using Windows.UI.Xaml.Media;
 #endif
 
 using GART.Data;
+
+#if NonXna
+using NonXnaUtils;
+using Vector3 = NonXnaUtils.Vector3;
+using Matrix = NonXnaUtils.Matrix;
+using Viewport = NonXnaUtils.Viewport;
+#else
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
+using Vector3 = Microsoft.Xna.Framework.Vector3;
 using Matrix = Microsoft.Xna.Framework.Matrix;
+using Viewport = Microsoft.Xna.Framework.Graphics.Viewport;
+#endif
+
 using System;
 using GART.BaseControls;
 

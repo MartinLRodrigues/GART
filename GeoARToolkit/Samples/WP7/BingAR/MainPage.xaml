@@ -11,7 +11,7 @@
     xmlns:System="clr-namespace:System;assembly=mscorlib"
     x:Class="BingAR.MainPage"
     mc:Ignorable="d" d:DesignWidth="480" d:DesignHeight="728"
-    SupportedOrientations="Portrait" Orientation="Portrait" >
+    SupportedOrientations="PortraitOrLandscape" Orientation="Portrait" >
     
     <phone:PhoneApplicationPage.Resources>
     	<DataTemplate x:Key="RestaurantItem">

@@ -24,8 +24,13 @@
 using System.Windows;
 using System.Windows.Input;
 using Microsoft.Phone.Controls;
+#if NonXna
+using NonXnaUtils;
+using Matrix = NonXnaUtils.Matrix;
+#else
 using Microsoft.Xna.Framework;
 using Matrix = Microsoft.Xna.Framework.Matrix;
+#endif
 using Point = System.Windows.Point;
 using GART;
 using GART.Controls;

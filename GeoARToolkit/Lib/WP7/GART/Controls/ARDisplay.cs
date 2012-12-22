@@ -49,8 +49,15 @@ using Windows.UI.Xaml.Media;
 
 using GART.BaseControls;
 using GART.Data;
+
+#if NonXna
+using NonXnaUtils;
+using Matrix = NonXnaUtils.Matrix;
+#else
 using Microsoft.Xna.Framework;
 using Matrix = Microsoft.Xna.Framework.Matrix;
+#endif
+
 using System;
 using System.Collections;
 using System.Collections.ObjectModel;
@@ -514,7 +521,29 @@ namespace GART.Controls
                 MotionReading mr = e.SensorReading;
 
                 // Update ourslves which will in turn update all the views
-                this.Attitude = mr.Attitude.RotationMatrix;
+                
+                // Converting XNA to nonXna Matrix
+                this.Attitude = new Matrix(
+                    mr.Attitude.RotationMatrix.M11,
+                    mr.Attitude.RotationMatrix.M12,
+                    mr.Attitude.RotationMatrix.M13,
+                    mr.Attitude.RotationMatrix.M14,
+
+                    mr.Attitude.RotationMatrix.M21,
+                    mr.Attitude.RotationMatrix.M22,
+                    mr.Attitude.RotationMatrix.M23,
+                    mr.Attitude.RotationMatrix.M24,
+
+                    mr.Attitude.RotationMatrix.M31,
+                    mr.Attitude.RotationMatrix.M32,
+                    mr.Attitude.RotationMatrix.M33,
+                    mr.Attitude.RotationMatrix.M34,
+
+                    mr.Attitude.RotationMatrix.M41,
+                    mr.Attitude.RotationMatrix.M42,
+                    mr.Attitude.RotationMatrix.M43,
+                    mr.Attitude.RotationMatrix.M44);
+
                 this.AttitudeHeading = MathHelper.ToDegrees(mr.Attitude.Yaw);
             });
         }
@@ -797,7 +826,7 @@ namespace GART.Controls
                     break;
 
                 case ControlOrientation.LandscapeRight:
-                    orientationRotation = new CompositeTransform() { CenterX = 0.5, CenterY = 0.5, Rotation = landscapeRightRotation };
+                    orientationRotation = new CompositeTransform() { CenterX = 0.5, CenterY = 0.5, Rotation = 180 };
                     break;
 
                 default:
