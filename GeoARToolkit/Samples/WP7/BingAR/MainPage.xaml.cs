@@ -22,8 +22,8 @@
 #endregion // License
 
 
-// Uncomment to test win NonXna library
-//#define NonXna
+// Uncomment to test win X3D library
+//#define X3D
 //
 
 using System;
@@ -41,8 +41,8 @@ using Microsoft.Phone.Controls;
 using System.Device.Location;
 using GART;
 using GART.Data;
-#if NonXna
-using NonXnaUtils;
+#if X3D
+using GART.X3D;
 #else
 using Microsoft.Xna.Framework;
 #endif

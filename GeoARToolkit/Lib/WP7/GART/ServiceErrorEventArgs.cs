@@ -22,6 +22,7 @@
 #endregion // License
 
 using System;
+using System.Collections.ObjectModel;
 
 namespace GART
 {
@@ -31,10 +32,10 @@ namespace GART
         Motion,
         Location
     }
-    
-    public class ServiceErrorEventArgs : EventArgs
+
+    public class ServiceErrorData
     {
-        public ServiceErrorEventArgs(ARService service, Exception exception)
+        public ServiceErrorData(ARService service, Exception exception)
         {
             this.Service = service;
             this.Exception = exception;
@@ -43,4 +44,15 @@ namespace GART
         public ARService Service { get; private set; }
         public Exception Exception { get; private set; }
     }
+
+    public class ServiceErrorsEventArgs : EventArgs
+    {
+        public ServiceErrorsEventArgs(Collection<ServiceErrorData> errors)
+        {
+            this.Errors = errors;
+        }
+
+        public Collection<ServiceErrorData> Errors { get; private set; }
+    }
+
 }

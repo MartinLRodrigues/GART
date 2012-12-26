@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace NonXnaUtils
+namespace GART.X3D
 {
     public struct Vector3
     {

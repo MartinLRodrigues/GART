@@ -9,20 +9,27 @@
     mc:Ignorable="d">
     <Page.BottomAppBar>
         <AppBar>
-            <StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
-                <Button x:Name="MapButton" Style="{StaticResource MapAppBarButton}" Click="MapButton_Click"/>
-                <Button x:Name="HeadingButton" AutomationProperties.Name="Heading"  Style="{StaticResource AppBarButtonStyle}" Click="HeadingButton_Click"/>
-                <Button x:Name="WorldButton" AutomationProperties.Name="World"  Style="{StaticResource AppBarButtonStyle}" Click="WorldButton_Click"/>
-                <Button x:Name="RotationButton" AutomationProperties.Name="Rotation"  Style="{StaticResource AppBarButtonStyle}" Click="RotationButton_Click"/>
-            </StackPanel>
+            <Grid>
+                <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
+                    <Button x:Name="AddItemsButton" AutomationProperties.Name="Heading"  Style="{StaticResource AppBarButtonStyle}" Click="AddItemsButton_Click"/>
+                    <Button x:Name="ClearItemsButton" AutomationProperties.Name="Heading"  Style="{StaticResource AppBarButtonStyle}" Click="ClearItemsButton_Click"/>
+                </StackPanel>
+                <StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
+                    <Button x:Name="MapButton" Style="{StaticResource MapAppBarButton}" Click="MapButton_Click"/>
+                    <Button x:Name="HeadingButton" AutomationProperties.Name="Heading"  Style="{StaticResource AppBarButtonStyle}" Click="HeadingButton_Click"/>
+                    <Button x:Name="WorldButton" AutomationProperties.Name="World"  Style="{StaticResource AppBarButtonStyle}" Click="WorldButton_Click"/>
+                    <Button x:Name="RotationButton" AutomationProperties.Name="Rotation"  Style="{StaticResource AppBarButtonStyle}" Click="RotationButton_Click"/>
+                </StackPanel>
+            </Grid>
         </AppBar>
     </Page.BottomAppBar>
 
     <Grid Background="{StaticResource ApplicationPageBackgroundThemeBrush}">
-        <Controls:ARDisplay x:Name="ARDisplay">
+        <Controls:ARDisplay x:Name="ARDisplay" ServiceErrors="ARDisplay_ServiceErrors">
             <Controls:VideoPreview />
             <Controls:OverheadMap x:Name="OverheadMap" Credentials="AhaN4ZBwsGOnuWVfPhEyRh99c3I81NaL6zLEDFQwzQ6IUWP5JwTdjtKxG_aFxArp" Visibility="Collapsed" />
             <Controls:HeadingIndicator x:Name="HeadingIndicator" />
+            <Controls:WorldView x:Name="WorldView" />
         </Controls:ARDisplay>
 
     </Grid>

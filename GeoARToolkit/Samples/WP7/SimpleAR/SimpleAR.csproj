@@ -126,10 +126,6 @@
       <Project>{CA5A6DE2-803F-4A37-A4BD-5952D63BEEF9}</Project>
       <Name>GART.WP7</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\NonXnaUtils\NonXnaUtils.WP7.csproj">
-      <Project>{9D4FF601-3EC1-4F84-AC26-C022E67AEBE8}</Project>
-      <Name>NonXnaUtils.WP7</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\Silverlight for Phone\$(TargetFrameworkVersion)\Microsoft.Silverlight.$(TargetFrameworkProfile).Overrides.targets" />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\Silverlight for Phone\$(TargetFrameworkVersion)\Microsoft.Silverlight.CSharp.targets" />

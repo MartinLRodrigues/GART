@@ -36,11 +36,11 @@ using Windows.UI.Xaml.Media;
 
 using GART.Data;
 
-#if NonXna
-using NonXnaUtils;
-using Vector3 = NonXnaUtils.Vector3;
-using Matrix = NonXnaUtils.Matrix;
-using Viewport = NonXnaUtils.Viewport;
+#if X3D
+using GART.X3D;
+using Vector3 = GART.X3D.Vector3;
+using Matrix = GART.X3D.Matrix;
+using Viewport = GART.X3D.Viewport;
 #else
 using Microsoft.Xna.Framework;
 using Vector3 = Microsoft.Xna.Framework.Vector3;

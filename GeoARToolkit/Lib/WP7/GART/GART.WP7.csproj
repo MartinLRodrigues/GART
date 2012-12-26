@@ -30,7 +30,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>Bin\Debug</OutputPath>
-    <DefineConstants>TRACE;DEBUG;SILVERLIGHT;WINDOWS_PHONE;WP7</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;SILVERLIGHT;WINDOWS_PHONE;WP7;X3D</DefineConstants>
     <NoStdLib>true</NoStdLib>
     <NoConfig>true</NoConfig>
     <ErrorReport>prompt</ErrorReport>
@@ -62,6 +62,12 @@
     <Reference Include="mscorlib.extensions" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="X3D\MathHelper.cs" />
+    <Compile Include="X3D\Matrix.cs" />
+    <Compile Include="X3D\Quaternion.cs" />
+    <Compile Include="X3D\Vector2.cs" />
+    <Compile Include="X3D\Vector3.cs" />
+    <Compile Include="X3D\Viewport.cs" />
     <Compile Include="BaseControls\ARView.cs" />
     <Compile Include="BaseControls\ARItemsView.cs" />
     <Compile Include="BaseControls\IOrientationAware.cs" />
@@ -103,12 +109,6 @@
     <None Include="..\..\..\License\GeoARToolkit.licenseheader">
       <Link>GeoARToolkit.licenseheader</Link>
     </None>
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\..\NonXnaUtils\NonXnaUtils.WP7.csproj">
-      <Project>{9D4FF601-3EC1-4F84-AC26-C022E67AEBE8}</Project>
-      <Name>NonXnaUtils.WP7</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\Silverlight for Phone\$(TargetFrameworkVersion)\Microsoft.Silverlight.$(TargetFrameworkProfile).Overrides.targets" />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\Silverlight for Phone\$(TargetFrameworkVersion)\Microsoft.Silverlight.CSharp.targets" />

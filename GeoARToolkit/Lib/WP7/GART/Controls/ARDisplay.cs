@@ -50,9 +50,9 @@ using Windows.UI.Xaml.Media;
 using GART.BaseControls;
 using GART.Data;
 
-#if NonXna
-using NonXnaUtils;
-using Matrix = NonXnaUtils.Matrix;
+#if X3D
+using GART.X3D;
+using Matrix = GART.X3D.Matrix;
 #else
 using Microsoft.Xna.Framework;
 using Matrix = Microsoft.Xna.Framework.Matrix;
@@ -189,13 +189,14 @@ namespace GART.Controls
         private GeoCoordinateWatcher location;
         private Motion motion;
         private PhotoCamera photoCamera;
-        private ItemCalculationSettings settings;
         #else
         private Geolocator location;
         private Inclinometer motion;
         #endif
 
+        private Collection<ServiceErrorData> serviceErrors = new Collection<ServiceErrorData>();
         private bool servicesRunning;
+        private ItemCalculationSettings settings;
         private ObservableCollection<IARView> views;
         #endregion // Member Variables
 
@@ -357,13 +358,17 @@ namespace GART.Controls
                 }
                 catch (Exception ex)
                 {
-                    OnServiceError(new ServiceErrorEventArgs(ARService.Camera, ex));
+                    serviceErrors.Add(new ServiceErrorData(ARService.Camera, ex));
                 }
             }
         }
         #endif
 
+        #if WP7
         private void StartLocation()
+        #else
+        private async Task StartLocation()
+        #endif
         {
             // If the Location object is null, initialize it and add a CurrentValueChanged
             // event handler.
@@ -386,7 +391,7 @@ namespace GART.Controls
                 }
                 catch (Exception ex)
                 {
-                    OnServiceError(new ServiceErrorEventArgs(ARService.Location, ex));
+                    serviceErrors.Add(new ServiceErrorData(ARService.Location, ex));
                 }
 
                 #else
@@ -395,7 +400,17 @@ namespace GART.Controls
                 location.MovementThreshold = 0; // TODO: Do we leave this? High battery cost but most accurate AR simulation
                 location.PositionChanged += location_PositionChanged;
 
-                // PORT: Grab location once?
+                // Grab location once?
+                try
+                {
+                    var loc = (await location.GetGeopositionAsync()).Coordinate;
+                    this.Location = new Location(loc.Latitude, loc.Longitude);
+                    this.TravelHeading = loc.Heading ?? 0; // Force to 0 degrees if unknown.
+                }
+                catch (Exception ex)
+                {
+                    serviceErrors.Add(new ServiceErrorData(ARService.Location, ex));
+                }
                 
                 #endif
             }
@@ -424,12 +439,12 @@ namespace GART.Controls
                 }
                 catch (Exception ex)
                 {
-                    OnServiceError(new ServiceErrorEventArgs(ARService.Motion, ex));
+                    serviceErrors.Add(new ServiceErrorData(ARService.Motion, ex));
                 }
             }
             else
             {
-                OnServiceError(new ServiceErrorEventArgs(ARService.Motion, new InvalidOperationException("The Motion API is not supported on this device.")));
+                serviceErrors.Add(new ServiceErrorData(ARService.Motion, new InvalidOperationException("The Motion API is not supported on this device.")));
             }
             
             #else
@@ -442,7 +457,7 @@ namespace GART.Controls
             }
             else
             {
-                OnServiceError(new ServiceErrorEventArgs(ARService.Motion, new InvalidOperationException("Inclinometer is not supported on this device.")));
+                serviceErrors.Add(new ServiceErrorData(ARService.Motion, new InvalidOperationException("Inclinometer is not supported on this device.")));
             }
 
             #endif
@@ -504,10 +519,15 @@ namespace GART.Controls
         #else
         private void location_PositionChanged(object sender, PositionChangedEventArgs e)
         {
-            // Update ourslves which will in turn update all the views
-            var loc = e.Position.Coordinate;
-            this.Location = new Location(loc.Latitude, loc.Longitude);
-            this.TravelHeading = loc.Heading ?? 0; // Force to 0 degrees if unknown.
+            // This event arrives on a background thread. Use BeginInvoke to call
+            // CurrentValueChanged on the UI thread.
+            var t = Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
+            {
+                // Update ourslves which will in turn update all the views
+                var loc = e.Position.Coordinate;
+                this.Location = new Location(loc.Latitude, loc.Longitude);
+                this.TravelHeading = loc.Heading ?? 0; // Force to 0 degrees if unknown.
+            });
         }
         #endif
 
@@ -552,15 +572,13 @@ namespace GART.Controls
         {
             // This event arrives on a background thread. Use Dispatcher to call
             // CurrentValueChanged on the UI thread.
-            #if WP7
-            Dispatcher.BeginInvoke(() =>
-            #else
             var t = Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
-            #endif 
                 {
-                    // PORT: How do we do setup a rotation matrix? Is it even used?
-                    // this.Attitude = mr.Attitude.RotationMatrix; 
-                    this.AttitudeHeading = args.Reading.YawDegrees;
+                    var r = args.Reading;
+
+                    // PORT: Is this the correct way to setup a rotation matrix? It is used by WorldView.OnAttitudeChanged
+                    this.Attitude = Matrix.CreateFromYawPitchRoll(r.YawDegrees, r.PitchDegrees, r.RollDegrees);
+                    this.AttitudeHeading = r.YawDegrees;
                 });
         }
         #endif
@@ -765,11 +783,11 @@ namespace GART.Controls
         /// <param name="e">
         /// A <see cref="DependencyPropertyChangedEventArgs"/> containing event information.
         /// </param>
-        protected virtual void OnServiceError(ServiceErrorEventArgs e)
+        protected virtual void OnServiceErrors(ServiceErrorsEventArgs e)
         {
-            if (ServiceError != null)
+            if (ServiceErrors != null)
             {
-                ServiceError(this, e);
+                ServiceErrors(this, e);
             }
         }
 
@@ -865,30 +883,47 @@ namespace GART.Controls
         /// <summary>
         /// Starts any enabled AR services (Motion, Camera, etc)
         /// </summary>
+        #if WP7
         public void StartServices()
+        #else
+        public async Task StartServices()
+        #endif
         {
             // If services are already started, ignore
             if (servicesRunning) { return; }
+            
+            // Started
+            servicesRunning = true;
+
+            // Clear any errors
+            serviceErrors.Clear();
 
             if (CameraEnabled)
             {
                 #if WP7
                 StartCamera();
                 #else
-                var t = StartCamera();
+                await StartCamera();
                 #endif
             }
             if (LocationEnabled)
             {
+                #if WP7
                 StartLocation();
+                #else
+                await StartLocation();
+                #endif
             }
             if (MotionEnabled)
             {
                 StartMotion();
             }
 
-            // Started
-            servicesRunning = true;
+            // Notify of errors?
+            if (serviceErrors.Count > 0)
+            {
+                OnServiceErrors(new ServiceErrorsEventArgs(serviceErrors));
+            }
         }
 
         public void HandleOrientationChange(ControlOrientation newOrientation)
@@ -1189,7 +1224,7 @@ namespace GART.Controls
         /// <summary>
         /// Occurs when an error was encountered starting or stopping a service.
         /// </summary>
-        public event EventHandler<ServiceErrorEventArgs> ServiceError;
+        public event EventHandler<ServiceErrorsEventArgs> ServiceErrors;
         #endregion // Public Events
 
         #endregion // Instance Version

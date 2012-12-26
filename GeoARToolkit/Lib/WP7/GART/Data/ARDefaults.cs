@@ -22,10 +22,10 @@
 #endregion // License
 
 #if WP7
-#if NonXna
-using NonXnaUtils;
-using Vector3 = NonXnaUtils.Vector3;
-using Matrix = NonXnaUtils.Matrix;
+#if X3D
+using GART.X3D;
+using Vector3 = GART.X3D.Vector3;
+using Matrix = GART.X3D.Matrix;
 #else
 using Microsoft.Xna.Framework;
 using Vector3 = Microsoft.Xna.Framework.Vector3;

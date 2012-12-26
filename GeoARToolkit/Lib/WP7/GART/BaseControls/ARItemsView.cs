@@ -41,9 +41,9 @@ using VideoSource = Windows.Media.Capture.MediaCapture;
 
 using GART.BaseControls;
 using GART.Data;
-#if NonXna
-using NonXnaUtils;
-using Matrix = NonXnaUtils.Matrix;
+#if X3D
+using GART.X3D;
+using Matrix = GART.X3D.Matrix;
 #else
 using Microsoft.Xna.Framework;
 using Matrix = Microsoft.Xna.Framework.Matrix;

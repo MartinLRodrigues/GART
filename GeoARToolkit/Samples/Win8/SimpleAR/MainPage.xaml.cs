@@ -6,8 +6,10 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.UI.Popups;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -93,7 +95,7 @@ namespace SimpleAR
 
         void MainPage_Loaded(object sender, RoutedEventArgs e)
         {
-            ARDisplay.StartServices();
+            var t = ARDisplay.StartServices();
         }
 
         
@@ -133,6 +135,28 @@ namespace SimpleAR
         private void RotationButton_Click(object sender, RoutedEventArgs e)
         {
             SwitchHeadingMode();
+        }
+
+        private void ARDisplay_ServiceErrors(object sender, ServiceErrorsEventArgs e)
+        {
+            StringBuilder sb = new StringBuilder();
+            foreach (var error in e.Errors)
+            {
+                sb.AppendLine(string.Format("There was a problem with {0}: {1}", error.Service, error.Exception.Message));
+            }
+
+            MessageDialog md = new MessageDialog(sb.ToString());
+            var t = md.ShowAsync();
+        }
+
+        private void AddItemsButton_Click(object sender, RoutedEventArgs e)
+        {
+            AddNearbyLabels();
+        }
+
+        private void ClearItemsButton_Click(object sender, RoutedEventArgs e)
+        {
+            ARDisplay.ARItems.Clear();
         }
     }
 }

@@ -33,11 +33,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Win8", "Win8", "{33ECDA2B-F
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimpleAR", "Samples\Win8\SimpleAR\SimpleAR.csproj", "{D2603EB8-807A-4679-88EB-8A37A90B0CFA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NonXnaUtils.WP7", "NonXnaUtils\NonXnaUtils.WP7.csproj", "{9D4FF601-3EC1-4F84-AC26-C022E67AEBE8}"
-EndProject
 Global
 	GlobalSection(TeamFoundationVersionControl) = preSolution
-		SccNumberOfProjects = 7
+		SccNumberOfProjects = 6
 		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
 		SccTeamFoundationServer = https://tfs.codeplex.com/tfs/tfs06
 		SccLocalPath0 = .
@@ -61,10 +59,6 @@ Global
 		SccProjectTopLevelParentUniqueName5 = GeoARToolkit.sln
 		SccProjectName5 = Samples/Win8/SimpleAR
 		SccLocalPath5 = Samples\\Win8\\SimpleAR
-		SccProjectUniqueName6 = NonXnaUtils\\NonXnaUtils.WP7.csproj
-		SccProjectTopLevelParentUniqueName6 = GeoARToolkit.sln
-		SccProjectName6 = NonXnaUtils
-		SccLocalPath6 = NonXnaUtils
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -167,16 +161,6 @@ Global
 		{D2603EB8-807A-4679-88EB-8A37A90B0CFA}.Release|x86.ActiveCfg = Release|x86
 		{D2603EB8-807A-4679-88EB-8A37A90B0CFA}.Release|x86.Build.0 = Release|x86
 		{D2603EB8-807A-4679-88EB-8A37A90B0CFA}.Release|x86.Deploy.0 = Release|x86
-		{9D4FF601-3EC1-4F84-AC26-C022E67AEBE8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{9D4FF601-3EC1-4F84-AC26-C022E67AEBE8}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{9D4FF601-3EC1-4F84-AC26-C022E67AEBE8}.Debug|ARM.ActiveCfg = Debug|Any CPU
-		{9D4FF601-3EC1-4F84-AC26-C022E67AEBE8}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{9D4FF601-3EC1-4F84-AC26-C022E67AEBE8}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{9D4FF601-3EC1-4F84-AC26-C022E67AEBE8}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{9D4FF601-3EC1-4F84-AC26-C022E67AEBE8}.Release|Any CPU.Build.0 = Release|Any CPU
-		{9D4FF601-3EC1-4F84-AC26-C022E67AEBE8}.Release|ARM.ActiveCfg = Release|Any CPU
-		{9D4FF601-3EC1-4F84-AC26-C022E67AEBE8}.Release|x64.ActiveCfg = Release|Any CPU
-		{9D4FF601-3EC1-4F84-AC26-C022E67AEBE8}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -191,7 +175,6 @@ Global
 		{65A2A3A5-83DB-485A-87F4-DD9C068719A9} = {7C19B009-356E-436F-B8B8-695F702B1F39}
 		{AEB5E2AE-4ADE-45EA-BB17-3AA73EAFD38D} = {8BF673D7-C3BA-47DF-B330-047DEFC73418}
 		{0518563C-ACCA-4A14-8C5D-DDBE93E2605F} = {37A3774C-2717-4B7D-A1DA-8AD80C9DCECD}
-		{9D4FF601-3EC1-4F84-AC26-C022E67AEBE8} = {37A3774C-2717-4B7D-A1DA-8AD80C9DCECD}
 		{D2603EB8-807A-4679-88EB-8A37A90B0CFA} = {33ECDA2B-F55E-4186-BAA9-2DEED689044F}
 	EndGlobalSection
 EndGlobal
