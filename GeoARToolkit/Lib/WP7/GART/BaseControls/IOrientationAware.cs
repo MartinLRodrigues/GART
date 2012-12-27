@@ -31,33 +31,17 @@ namespace GART.BaseControls
     public enum ControlOrientation
     {
         /// <summary>
-        /// No orientation is specified.
-        /// </summary>
-        None = 0,
-        /// <summary>
         /// Portrait orientation.
         /// </summary>
-        Portrait = 1,
+        Default,
         /// <summary>
-        /// Landscape orientation.
+        /// The control is rotated 90 degrees clockwise
         /// </summary>
-        Landscape = 2,
+        Clockwise90Degrees,
         /// <summary>
-        /// Portrait orientation.
+        /// The control is rotated 270 degrees clockwise
         /// </summary>
-        PortraitUp = 5,
-        /// <summary>
-        /// Portrait orientation. This orientation is never used.
-        /// </summary>
-        PortraitDown = 9,
-        /// <summary>
-        /// Landscape orientation with the top of the page rotated to the left.
-        /// </summary>
-        LandscapeLeft = 18,
-        /// <summary>
-        /// Landscape orientation with the top of the page rotated to the right.
-        /// </summary>
-        LandscapeRight = 34,
+        Clockwise270Degrees,
     }
 
     /// <summary>

@@ -74,13 +74,7 @@ namespace GART.Controls
     public class ARDisplay : Grid, IARItemsView
     {
         #region Static Version
-        #if WP7
-        /// <summary>
-        /// Rotation in degrees needed for items to be rendered in landscape right orientation
-        /// </summary>
-        private static readonly int landscapeRightRotation = 180;
-        #endif
-        
+
         #region Dependency Properties
         /// <summary>
         /// Identifies the <see cref="ARItems"/> dependency property.
@@ -152,7 +146,7 @@ namespace GART.Controls
             ((ARDisplay)d).OnMotionEnabledChanged(e);
         }
 
-        static public readonly DependencyProperty OrientationProperty = DependencyProperty.Register("Orientation", typeof(ControlOrientation), typeof(ARDisplay), new PropertyMetadata(ControlOrientation.Landscape, OnOrientationChanged));
+        static public readonly DependencyProperty OrientationProperty = DependencyProperty.Register("Orientation", typeof(ControlOrientation), typeof(ARDisplay), new PropertyMetadata(ControlOrientation.Default, OnOrientationChanged));
 
         private static void OnOrientationChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
@@ -186,11 +180,11 @@ namespace GART.Controls
         #region Member Variables
 
         #if WP7
-        private GeoCoordinateWatcher location;
+        private GeoCoordinateWatcher locationService;
         private Motion motion;
         private PhotoCamera photoCamera;
         #else
-        private Geolocator location;
+        private Geolocator locationService;
         private Inclinometer motion;
         #endif
 
@@ -372,22 +366,22 @@ namespace GART.Controls
         {
             // If the Location object is null, initialize it and add a CurrentValueChanged
             // event handler.
-            if (location == null)
+            if (locationService == null)
             {
                 #if WP7
 
-                location = new GeoCoordinateWatcher(GeoPositionAccuracy.High);
-                location.MovementThreshold = 0; // TODO: Do we leave this? High battery cost but most accurate AR simulation
-                location.PositionChanged += location_PositionChanged;
+                locationService = new GeoCoordinateWatcher(GeoPositionAccuracy.High);
+                locationService.MovementThreshold = 0; // TODO: Do we leave this? High battery cost but most accurate AR simulation
+                locationService.PositionChanged += location_PositionChanged;
 
                 // Try to start the Motion API.
                 try
                 {
                     // Start the service
-                    location.Start();
+                    locationService.Start();
 
                     // Force a grab of location once
-                    Location = location.Position.Location;
+                    Location = locationService.Position.Location;
                 }
                 catch (Exception ex)
                 {
@@ -396,14 +390,14 @@ namespace GART.Controls
 
                 #else
 
-                location = new Geolocator();
-                location.MovementThreshold = 0; // TODO: Do we leave this? High battery cost but most accurate AR simulation
-                location.PositionChanged += location_PositionChanged;
+                locationService = new Geolocator();
+                locationService.MovementThreshold = 0; // TODO: Do we leave this? High battery cost but most accurate AR simulation
+                locationService.PositionChanged += location_PositionChanged;
 
                 // Grab location once?
                 try
                 {
-                    var loc = (await location.GetGeopositionAsync()).Coordinate;
+                    var loc = (await locationService.GetGeopositionAsync()).Coordinate;
                     this.Location = new Location(loc.Latitude, loc.Longitude);
                     this.TravelHeading = loc.Heading ?? 0; // Force to 0 degrees if unknown.
                 }
@@ -478,14 +472,14 @@ namespace GART.Controls
 
         private void StopLocation()
         {
-            location.PositionChanged -= location_PositionChanged;
+            locationService.PositionChanged -= location_PositionChanged;
 
             #if WP7
-            location.Stop();
-            location.Dispose();
+            locationService.Stop();
+            locationService.Dispose();
             #endif
             
-            Location = null;
+            locationService = null;
         }
 
         private void StopMotion()
@@ -746,7 +740,11 @@ namespace GART.Controls
             {
                 if (LocationEnabled)
                 {
+                    #if WP7
                     StartLocation();
+                    #else
+                    var t = StartLocation();
+                    #endif
                 }
                 else
                 {
@@ -839,11 +837,11 @@ namespace GART.Controls
             CompositeTransform orientationRotation; 
             switch (newOrientation)
             {
-                case ControlOrientation.LandscapeLeft:
+                case ControlOrientation.Clockwise270Degrees:
                     orientationRotation = new CompositeTransform() { CenterX = 0.5, CenterY = 0.5, Rotation = 0 };
                     break;
 
-                case ControlOrientation.LandscapeRight:
+                case ControlOrientation.Clockwise90Degrees:
                     orientationRotation = new CompositeTransform() { CenterX = 0.5, CenterY = 0.5, Rotation = 180 };
                     break;
 
@@ -859,18 +857,14 @@ namespace GART.Controls
             VideoRotation orientationRotation = VideoRotation.None;
             switch (newOrientation)
             {
-                case ControlOrientation.PortraitDown:
-                    orientationRotation = VideoRotation.Clockwise90Degrees;
-                    break;
-                case ControlOrientation.PortraitUp:
-                    orientationRotation = VideoRotation.Clockwise270Degrees;
-                    break;
-                case ControlOrientation.LandscapeLeft:
+                case ControlOrientation.Default:
                     orientationRotation = VideoRotation.None;
                     break;
-
-                case ControlOrientation.LandscapeRight:
-                    orientationRotation = VideoRotation.Clockwise180Degrees;
+                case ControlOrientation.Clockwise90Degrees:
+                    orientationRotation = VideoRotation.Clockwise270Degrees;
+                    break;
+                case ControlOrientation.Clockwise270Degrees:
+                    orientationRotation = VideoRotation.Clockwise90Degrees;
                     break;
             } // end switch 
 
@@ -924,11 +918,6 @@ namespace GART.Controls
             {
                 OnServiceErrors(new ServiceErrorsEventArgs(serviceErrors));
             }
-        }
-
-        public void HandleOrientationChange(ControlOrientation newOrientation)
-        {
-            Orientation = newOrientation;
         }
 
         /// <summary>

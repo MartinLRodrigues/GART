@@ -107,15 +107,15 @@ namespace GART.Controls
                 Vector3 cameraUpVector = Vector3.Up;
                 switch (currentOrientation)
                 {
-                    case ControlOrientation.PortraitUp:
+                    case ControlOrientation.Default:
                         cameraUpVector = Vector3.Up;
                         break;
 
-                    case ControlOrientation.LandscapeLeft:
+                    case ControlOrientation.Clockwise270Degrees:
                         cameraUpVector = Vector3.Right;
                         break;
 
-                    case ControlOrientation.LandscapeRight:
+                    case ControlOrientation.Clockwise90Degrees:
                         cameraUpVector = Vector3.Left;
                         break;
 

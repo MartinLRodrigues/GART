@@ -38,6 +38,7 @@ using GART.Data;
 using System.Device.Location;
 using System;
 using Microsoft.Phone.Controls.Maps.Platform;
+using GART.BaseControls;
 
 namespace SimpleAR
 {
@@ -134,6 +135,30 @@ namespace SimpleAR
             ARDisplay.StartServices();
 
             base.OnNavigatedTo(e);
+        }
+
+        /// <summary>
+        /// To support any orientation, override this method and call
+        /// ARDisplay.HandleOrientationChange() method
+        /// </summary>
+        /// <param name="e"></param>
+        protected override void OnOrientationChanged(OrientationChangedEventArgs e)
+        {
+            base.OnOrientationChanged(e);
+
+            ControlOrientation orientation = ControlOrientation.Default;
+
+            switch (e.Orientation)
+            {
+                case PageOrientation.LandscapeLeft:
+                    orientation = ControlOrientation.Clockwise270Degrees;
+                    break;
+                case PageOrientation.LandscapeRight:
+                    orientation = ControlOrientation.Clockwise90Degrees;
+                    break;
+            }
+
+            ARDisplay.Orientation = orientation;
         }
 
         private void HeadingButton_Click(object sender, System.EventArgs e)

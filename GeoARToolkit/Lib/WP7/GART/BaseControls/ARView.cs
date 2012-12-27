@@ -90,7 +90,7 @@ namespace GART.Controls
         /// <summary>
         /// Identifies the <see cref="Orientation" /> dependency property
         /// </summary>
-        static public readonly DependencyProperty OrientationProperty = DependencyProperty.Register("Orientation", typeof(ControlOrientation), typeof(ARView), new PropertyMetadata(ControlOrientation.Landscape, OnOrientationChanged));
+        static public readonly DependencyProperty OrientationProperty = DependencyProperty.Register("Orientation", typeof(ControlOrientation), typeof(ARView), new PropertyMetadata(ControlOrientation.Default, OnOrientationChanged));
 
         private static void OnOrientationChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {

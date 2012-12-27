@@ -64,7 +64,7 @@ namespace GART.Controls
     {
         #region Static Version
 
-        ControlOrientation currentOrientation = ControlOrientation.Portrait;
+        ControlOrientation currentOrientation = ControlOrientation.Default;
 
         #region Dependency Properties
         /// <summary>
@@ -131,11 +131,11 @@ namespace GART.Controls
 
             switch (currentOrientation)
             {
-                case ControlOrientation.LandscapeLeft:
+                case ControlOrientation.Clockwise270Degrees:
                     angle -= 90;
                     break;
 
-                case ControlOrientation.LandscapeRight:
+                case ControlOrientation.Clockwise90Degrees:
                     angle += 90;
                     break;
             }
