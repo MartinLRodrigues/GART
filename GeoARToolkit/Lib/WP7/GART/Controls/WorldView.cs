@@ -108,7 +108,11 @@ namespace GART.Controls
                 switch (currentOrientation)
                 {
                     case ControlOrientation.Default:
+                        #if WP7
                         cameraUpVector = Vector3.Up;
+                        #else
+                        cameraUpVector = Vector3.Down;
+                        #endif
                         break;
 
                     case ControlOrientation.Clockwise270Degrees:

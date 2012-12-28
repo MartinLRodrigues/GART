@@ -561,7 +561,7 @@ namespace GART.Controls
                 this.AttitudeHeading = MathHelper.ToDegrees(mr.Attitude.Yaw);
             });
         }
-        #else
+#else
         private void motion_ReadingChanged(Inclinometer sender, InclinometerReadingChangedEventArgs args)
         {
             // This event arrives on a background thread. Use Dispatcher to call
@@ -571,7 +571,7 @@ namespace GART.Controls
                     var r = args.Reading;
 
                     // PORT: Is this the correct way to setup a rotation matrix? It is used by WorldView.OnAttitudeChanged
-                    this.Attitude = Matrix.CreateFromYawPitchRoll(r.YawDegrees, r.PitchDegrees, r.RollDegrees);
+                    this.Attitude = Matrix.CreateFromYawPitchRoll(MathHelper.ToRadians(r.YawDegrees), MathHelper.ToRadians(r.PitchDegrees), MathHelper.ToRadians(r.RollDegrees));
                     this.AttitudeHeading = r.YawDegrees;
                 });
         }
