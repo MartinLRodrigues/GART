@@ -34,7 +34,9 @@ using System.Windows.Media;
 using VideoSource = System.Windows.Media.Brush;
 #else
 using Bing.Maps;
+using System.Linq;
 using System.Threading.Tasks;
+using Windows.Devices.Enumeration;
 using Windows.Devices.Geolocation;
 using Windows.Devices.Sensors;
 using Motion = Windows.Devices.Sensors.Inclinometer;
@@ -288,6 +290,37 @@ namespace GART.Controls
             }
         }
 
+        #if !WP7
+        private async Task FindBestCamera()
+        {
+            // Get all video capture devices
+            var devices = await DeviceInformation.FindAllAsync(DeviceClass.VideoCapture);
+            
+            // First look using panel, this is the best approach
+            var device = (from d in devices
+                            where d.EnclosureLocation != null &&
+                            d.EnclosureLocation.Panel == Windows.Devices.Enumeration.Panel.Back
+                            select d).FirstOrDefault();
+
+            // If camera wasn't found using panel location, look for a device that has "back" or "rear" in the name or ID
+            if (device == null)
+            {
+                device = (from d in devices
+                              where d.Name.ToLower().Contains("back") || 
+                                    d.Id.ToLower().Contains("back") ||
+                                    d.Name.ToLower().Contains("rear") || 
+                                    d.Id.ToLower().Contains("rear")
+                              select d).FirstOrDefault();
+            }
+            
+            // If a device was found, store it's ID
+            if (device != null)
+            {
+                CameraId = device.Id;
+            }
+        }
+        #endif
+
         private void RemoveViews(IList views)
         {
             foreach (object view in views)
@@ -346,8 +379,30 @@ namespace GART.Controls
                 var source = new Windows.Media.Capture.MediaCapture();
                 try
                 {
-                    await source.InitializeAsync();
+                    // Do we need to look for the best camera?
+                    if (string.IsNullOrEmpty(CameraId))
+                    {
+                        await FindBestCamera();
+                    }
+
+                    // Use a specific camera?
+                    if (!string.IsNullOrEmpty(CameraId))
+                    {
+                        await source.InitializeAsync(
+                            new MediaCaptureInitializationSettings
+                            {
+                                VideoDeviceId = CameraId,
+                                StreamingCaptureMode = StreamingCaptureMode.Video
+                            });
+                    }
+                    else
+                    {
+                        // Just use the default camera
+                        await source.InitializeAsync();
+                    }
                     VideoSource = source;
+
+                    // Start video preview
                     await source.StartPreviewAsync();
                 }
                 catch (Exception ex)
@@ -1009,6 +1064,16 @@ namespace GART.Controls
                 SetValue(CameraEnabledProperty, value);
             }
         }
+
+        #if !WP7
+        /// <summary>
+        /// Gets or sets the ID of the camera device to use.
+        /// </summary>
+        /// <value>
+        /// The ID of the camera device to use of the <c>ARDisplay</c>.
+        /// </value>
+        public string CameraId { get; set; }
+        #endif
 
         /// <summary>
         /// Gets or sets the direction the user is looking in degrees. This is a dependency property.

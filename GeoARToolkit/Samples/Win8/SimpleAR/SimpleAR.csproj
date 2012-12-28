@@ -105,6 +105,10 @@
   </PropertyGroup>
   <ItemGroup>
     <!-- A reference to the entire .Net Framework and Windows SDK are automatically included -->
+    <ProjectReference Include="..\..\..\..\..\..\..\Documents\GitHub\MonoGame\MonoGame.Framework\MonoGame.Framework.Windows8.csproj">
+      <Project>{5c7acd75-8dc2-490f-9a94-d3b8064d9e12}</Project>
+      <Name>MonoGame.Framework.Windows8</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\..\Lib\Win8\GART.Win8\GART.Win8.csproj">
       <Project>{AEB5E2AE-4ADE-45EA-BB17-3AA73EAFD38D}</Project>
       <Name>GART.Win8</Name>
