@@ -21,11 +21,21 @@
  ******************************************************************************/
 #endregion // License
 
-#if WP7
-using Microsoft.Phone.Controls.Maps.Platform;
+#if WINDOWS_PHONE
 using System.Windows.Media;
 using VideoSource = System.Windows.Media.Brush;
-#else
+#endif
+
+#if WP7
+using Microsoft.Phone.Controls.Maps.Platform;
+#endif
+
+#if WP8
+using Microsoft.Phone.Maps.Controls;
+using Location = System.Device.Location.GeoCoordinate;
+#endif
+
+#if WIN_RT
 using Bing.Maps;
 using Windows.Devices.Geolocation;
 using Windows.UI.Xaml.Media;

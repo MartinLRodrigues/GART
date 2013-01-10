@@ -21,7 +21,7 @@
  ******************************************************************************/
 #endregion // License
 
-#if WP7
+#if WINDOWS_PHONE
 using Microsoft.Phone.Controls;
 using System.Windows;
 using Point = System.Windows.Point;

@@ -21,7 +21,6 @@
  ******************************************************************************/
 #endregion // License
 
-#if WP7
 #if X3D
 using GART.X3D;
 using Vector3 = GART.X3D.Vector3;
@@ -31,11 +30,23 @@ using Microsoft.Xna.Framework;
 using Vector3 = Microsoft.Xna.Framework.Vector3;
 using Matrix = Microsoft.Xna.Framework.Matrix;
 #endif
-using Microsoft.Phone.Controls.Maps.Platform;
+
+#if WINDOWS_PHONE
 using System.Device.Location;
 using System.Windows.Media;
 using VideoSource = System.Windows.Media.Brush;
-#else
+#endif
+
+#if WP7
+using Microsoft.Phone.Controls.Maps.Platform;
+#endif
+
+#if WP8
+using Microsoft.Phone.Maps.Controls;
+using Location = System.Device.Location.GeoCoordinate;
+#endif
+
+#if WIN_RT
 using Bing.Maps;
 using Windows.Devices.Geolocation;
 using Windows.UI;

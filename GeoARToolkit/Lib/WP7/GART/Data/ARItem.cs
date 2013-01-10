@@ -22,10 +22,20 @@
 #endregion // License
 
 using System;
+#if WINDOWS_PHONE
+using System.Device.Location;
+#endif
+
 #if WP7
 using Microsoft.Phone.Controls.Maps.Platform;
-using System.Device.Location;
-#else
+#endif
+
+#if WP8
+using Microsoft.Phone.Maps.Controls;
+using Location = System.Device.Location.GeoCoordinate;
+#endif
+
+#if WIN_RT
 using Bing.Maps;
 using Windows.Devices.Geolocation;
 #endif

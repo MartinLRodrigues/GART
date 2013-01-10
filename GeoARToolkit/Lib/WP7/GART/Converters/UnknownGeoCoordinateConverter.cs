@@ -25,7 +25,16 @@
 using System.Device.Location;
 using System.Windows.Data;
 using Microsoft.Phone.Controls.Maps.Platform;
-#else
+#endif
+
+#if WP8
+using System.Device.Location;
+using Location = System.Device.Location.GeoCoordinate;
+using System.Windows.Data;
+using Microsoft.Phone.Maps.Controls;
+#endif
+
+#if WIN_RT
 using Bing.Maps;
 using Windows.UI.Xaml.Data;
 #endif

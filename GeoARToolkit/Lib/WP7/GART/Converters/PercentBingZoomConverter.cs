@@ -21,7 +21,7 @@
  ******************************************************************************/
 #endregion // License
 
-#if WP7
+#if WINDOWS_PHONE
 using Culture = System.Globalization.CultureInfo;
 using System.Windows.Data;
 #else

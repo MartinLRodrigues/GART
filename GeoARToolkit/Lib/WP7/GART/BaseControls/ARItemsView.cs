@@ -23,14 +23,24 @@
 
 using System.Windows;
 
-#if WP7
+#if WINDOWS_PHONE
 using Microsoft.Phone.Controls;
-using Microsoft.Phone.Controls.Maps.Platform;
 using System.Device.Location;
 using System.Windows.Controls;
 using System.Windows.Media;
 using VideoSource = System.Windows.Media.Brush;
-#else
+#endif
+
+#if WP7
+using Microsoft.Phone.Controls.Maps.Platform;
+#endif
+
+#if WP8
+using Microsoft.Phone.Maps.Controls;
+using Location = System.Device.Location.GeoCoordinate;
+#endif
+
+#if WIN_RT
 using Bing.Maps;
 using Windows.Devices.Geolocation;
 using Windows.UI.Xaml;
@@ -56,9 +66,10 @@ namespace GART.Controls
     /// <summary>
     /// A base control that serves as the starting point for an augmented reality view that renders ARItems.
     /// </summary>
-    #if WP7
+    #if WINDOWS_PHONE
     public abstract class ARItemsView : ListBox, IARItemsView
-    #else
+    #endif
+    #if WIN_RT
     public abstract class ARItemsView : ListView, IARItemsView
     #endif
     {

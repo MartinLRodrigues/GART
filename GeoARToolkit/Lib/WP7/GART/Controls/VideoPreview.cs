@@ -21,7 +21,7 @@
  ******************************************************************************/
 #endregion // License
 
-#if !WP7
+#if !WINDOWS_PHONE
 using Windows.UI.Xaml.Controls;
 #endif
 
@@ -43,7 +43,7 @@ namespace GART.Controls
         #region Instance Version
 
         #region Member Variables
-        #if !WP7
+        #if WIN_RT
         private CaptureElement captureElement;
         #endif
         #endregion // Member Variables
@@ -57,7 +57,7 @@ namespace GART.Controls
 
 
         #region Overrides / Event Handlers
-        #if !WP7
+        #if WIN_RT
         protected override void OnApplyTemplate()
         {
             base.OnApplyTemplate();

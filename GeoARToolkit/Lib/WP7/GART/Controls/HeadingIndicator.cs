@@ -21,7 +21,7 @@
  ******************************************************************************/
 #endregion // License
 
-#if WP7
+#if WINDOWS_PHONE
 using System.Windows;
 #else
 using Windows.UI.Xaml;

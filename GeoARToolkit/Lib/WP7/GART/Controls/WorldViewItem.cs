@@ -21,9 +21,11 @@
  ******************************************************************************/
 #endregion // License
 
-#if WP7
+#if WINDOWS_PHONE
 using System.Windows.Controls;
-#else
+#endif
+
+#if WIN_RT
 using Windows.UI.Xaml.Controls;
 #endif
 
@@ -32,17 +34,19 @@ namespace GART.Controls
     /// <summary>
     /// Represents a single item hosted in a <see cref="WorldView"/>.
     /// </summary>
-    #if WP7
+    #if WINDOWS_PHONE
     public class WorldViewItem : ListBoxItem
-    #else
+    #endif
+    #if WIN_RT
     public class WorldViewItem : ListViewItem
     #endif
     {
         public WorldViewItem()
         {
-            #if WP7
+            #if WINDOWS_PHONE
             DefaultStyleKey = typeof(ListBoxItem);
-            #else
+            #endif
+            #if WIN_RT
             DefaultStyleKey = typeof(ListViewItem);
             #endif
         }

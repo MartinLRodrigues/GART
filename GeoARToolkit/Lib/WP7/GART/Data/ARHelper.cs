@@ -21,10 +21,20 @@
  ******************************************************************************/
 #endregion // License
 
-#if WP7
+#if WINDOWS_PHONE
 using System.Device.Location;
+#endif
+
+#if WP7
 using Microsoft.Phone.Controls.Maps.Platform;
-#else
+#endif
+
+#if WP8
+using Microsoft.Phone.Maps.Controls;
+using Location = System.Device.Location.GeoCoordinate;
+#endif
+
+#if WIN_RT
 using Bing.Maps;
 #endif
 

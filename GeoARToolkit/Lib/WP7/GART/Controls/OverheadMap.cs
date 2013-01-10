@@ -26,7 +26,16 @@ using System.Windows.Media;
 using Microsoft.Phone.Controls.Maps;
 using Credentials = Microsoft.Phone.Controls.Maps.CredentialsProvider;
 using Microsoft.Phone.Controls.Maps.Design;
-#else
+#endif
+
+#if WP8
+using Credentials = GART.Controls.MapCredentials;
+using System.Windows.Media;
+using Microsoft.Phone.Maps;
+using Microsoft.Phone.Maps.Controls;
+#endif
+
+#if WIN_RT
 using Bing.Maps;
 using Credentials = System.String;
 using Windows.Foundation;
@@ -78,7 +87,13 @@ namespace GART.Controls
 
         #if WP7
         private Credentials credentials;
-        #else
+        #endif
+
+        #if WP8
+        private MapCredentials credentials;
+        #endif
+
+        #if WIN_RT
         private Credentials credentials = "";
         #endif
         #endregion // Member Variables
@@ -107,9 +122,10 @@ namespace GART.Controls
 
         #region Overrides / Event Handlers
 
-        #if WP7
+        #if WINDOWS_PHONE
         public override void OnApplyTemplate()
-        #else
+        #endif
+        #if WIN_RT
         protected override void OnApplyTemplate()
         #endif
         {
@@ -126,7 +142,14 @@ namespace GART.Controls
             // Connect credentials
             #if WP7
             map.CredentialsProvider = credentials;
-            #else
+            #endif
+
+            #if WP8
+            MapsSettings.ApplicationContext.ApplicationId = credentials.ApplicationId;
+            MapsSettings.ApplicationContext.AuthenticationToken = credentials.AuthenticationToken;
+            #endif
+            
+            #if WIN_RT
             map.Credentials = credentials;
             #endif
 
@@ -136,7 +159,7 @@ namespace GART.Controls
             // Connect data
             map.DataContext = arItems;
         
-            #if !WP7
+            #if WIN_RT
             // Set initial values for properties that can't be data bound in Windows 8
             map.Center = Location;
             map.ZoomLevel = PercentBingZoomConverter.PercentToMapLevel(ZoomLevel);
@@ -182,7 +205,7 @@ namespace GART.Controls
         #endregion // Overrides / Event Handlers
 
         #region Overridables / Event Triggers
-        #if !WP7
+        #if WIN_RT
         protected override void OnLocationChanged(DependencyPropertyChangedEventArgs e)
         {
             base.OnLocationChanged(e);
@@ -203,7 +226,7 @@ namespace GART.Controls
         /// </param>
         protected virtual void OnZoomLevelChanged(DependencyPropertyChangedEventArgs e)
         {
-            #if !WP7
+            #if WIN_RT
             // The Win8 version of the map control does not allow Zoom Level to be data bound
             if (map != null)
             {
@@ -243,6 +266,9 @@ namespace GART.Controls
         [Category("Map")]
         [TypeConverter(typeof(ApplicationIdCredentialsProviderConverter))]
         #endif
+        #if WP8
+        [Category("Map")]
+        #endif
         public Credentials Credentials
         {
             get
@@ -256,7 +282,15 @@ namespace GART.Controls
                 {
                     #if WP7
                     map.CredentialsProvider = value;
-                    #else
+                    #endif
+                    #if WP8
+                    if (value != null)
+                    {
+                        MapsSettings.ApplicationContext.ApplicationId = value.ApplicationId;
+                        MapsSettings.ApplicationContext.AuthenticationToken = value.AuthenticationToken;
+                    }
+                    #endif
+                    #if WIN_RT
                     map.Credentials = value;
                     #endif
                 }

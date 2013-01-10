@@ -21,18 +21,28 @@
  ******************************************************************************/
 #endregion // License
 
-#if WP7
+#if WINDOWS_PHONE
 using Microsoft.Devices;
 using Microsoft.Devices.Sensors;
 using Microsoft.Phone.Controls;
-using Microsoft.Phone.Controls.Maps.Platform;
 using System.Device.Location;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Markup;
 using System.Windows.Media;
 using VideoSource = System.Windows.Media.Brush;
-#else
+#endif
+
+#if WP7
+using Microsoft.Phone.Controls.Maps.Platform;
+#endif
+
+#if WP8
+using Microsoft.Phone.Maps.Controls;
+using Location = System.Device.Location.GeoCoordinate;
+#endif
+
+#if WIN_RT
 using Bing.Maps;
 using System.Linq;
 using System.Threading.Tasks;
@@ -47,7 +57,7 @@ using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Markup;
 using Windows.UI.Xaml.Media;
 
-#endif 
+#endif
 
 using GART.BaseControls;
 using GART.Data;
@@ -68,9 +78,10 @@ using System.ComponentModel;
 
 namespace GART.Controls
 {
-    #if WP7
+    #if WINDOWS_PHONE
     [ContentProperty("Views")]
-    #else
+    #endif
+    #if WIN_RT
     [ContentProperty(Name="Views")]
     #endif
     public class ARDisplay : Grid, IARItemsView
@@ -181,11 +192,13 @@ namespace GART.Controls
         #region Instance Version
         #region Member Variables
 
-        #if WP7
+        #if WINDOWS_PHONE
         private GeoCoordinateWatcher locationService;
         private Motion motion;
         private PhotoCamera photoCamera;
-        #else
+        #endif
+
+        #if WIN_RT
         private Geolocator locationService;
         private Inclinometer motion;
         #endif
@@ -234,7 +247,7 @@ namespace GART.Controls
             }
         }
 
-        #if WP7
+        #if WINDOWS_PHONE
         private void CreateVideoBrush()
         {
             // Create our brush
@@ -290,7 +303,7 @@ namespace GART.Controls
             }
         }
 
-        #if !WP7
+        #if WIN_RT
         private async Task FindBestCamera()
         {
             // Get all video capture devices
@@ -351,7 +364,7 @@ namespace GART.Controls
             }
         }
 
-        #if WP7
+        #if WINDOWS_PHONE
         private void StartCamera()
         {
             // If the camera hasn't been created yet, create it.
@@ -371,7 +384,9 @@ namespace GART.Controls
             // Connect the video brush to the camera
             vb.SetSource(photoCamera);
         }
-        #else
+        #endif
+
+        #if WIN_RT
         private async Task StartCamera()
         {
             if (VideoSource == null)
@@ -413,7 +428,7 @@ namespace GART.Controls
         }
         #endif
 
-        #if WP7
+        #if WINDOWS_PHONE
         private void StartLocation()
         #else
         private async Task StartLocation()
@@ -423,7 +438,7 @@ namespace GART.Controls
             // event handler.
             if (locationService == null)
             {
-                #if WP7
+                #if WINDOWS_PHONE
 
                 locationService = new GeoCoordinateWatcher(GeoPositionAccuracy.High);
                 locationService.MovementThreshold = 0; // TODO: Do we leave this? High battery cost but most accurate AR simulation
@@ -442,9 +457,9 @@ namespace GART.Controls
                 {
                     serviceErrors.Add(new ServiceErrorData(ARService.Location, ex));
                 }
+                #endif
 
-                #else
-
+                #if WIN_RT
                 locationService = new Geolocator();
                 locationService.MovementThreshold = 0; // TODO: Do we leave this? High battery cost but most accurate AR simulation
                 locationService.PositionChanged += location_PositionChanged;
@@ -460,7 +475,6 @@ namespace GART.Controls
                 {
                     serviceErrors.Add(new ServiceErrorData(ARService.Location, ex));
                 }
-                
                 #endif
             }
         }
@@ -468,8 +482,7 @@ namespace GART.Controls
 
         private void StartMotion()
         {
-            #if WP7
-
+            #if WINDOWS_PHONE
             if (Motion.IsSupported)
             {
                 // If the Motion object is null, initialize it and add a CurrentValueChanged
@@ -495,9 +508,9 @@ namespace GART.Controls
             {
                 serviceErrors.Add(new ServiceErrorData(ARService.Motion, new InvalidOperationException("The Motion API is not supported on this device.")));
             }
-            
-            #else
+            #endif
 
+            #if WIN_RT
             motion = Inclinometer.GetDefault();
             if (motion != null)
             {
@@ -508,19 +521,20 @@ namespace GART.Controls
             {
                 serviceErrors.Add(new ServiceErrorData(ARService.Motion, new InvalidOperationException("Inclinometer is not supported on this device.")));
             }
-
             #endif
         }
 
         private void StopCamera()
         {
-            #if WP7
+            #if WINDOWS_PHONE
             if (photoCamera != null)
             {
                 photoCamera.Dispose();
                 photoCamera = null;
             }
-            #else
+            #endif
+
+            #if WIN_RT
             VideoSource = null;
             #endif
         }
@@ -529,7 +543,7 @@ namespace GART.Controls
         {
             locationService.PositionChanged -= location_PositionChanged;
 
-            #if WP7
+            #if WINDOWS_PHONE
             locationService.Stop();
             locationService.Dispose();
             #endif
@@ -539,7 +553,7 @@ namespace GART.Controls
 
         private void StopMotion()
         {
-            #if WP7
+            #if WINDOWS_PHONE
             motion.CurrentValueChanged -= motion_CurrentValueChanged;
             motion.Stop();
             motion.Dispose();
@@ -552,7 +566,7 @@ namespace GART.Controls
         #endregion // Internal Methods
 
         #region Overrides / Event Handlers
-        #if WP7
+        #if WINDOWS_PHONE
         private void location_PositionChanged(object sender, GeoPositionChangedEventArgs<GeoCoordinate> e)
         {
             // This event arrives on a background thread. Use BeginInvoke to call
@@ -565,7 +579,9 @@ namespace GART.Controls
                 this.TravelHeading = loc.Course;
             });
         }
-        #else
+        #endif
+
+        #if WIN_RT
         private void location_PositionChanged(object sender, PositionChangedEventArgs e)
         {
             // This event arrives on a background thread. Use BeginInvoke to call
@@ -580,7 +596,7 @@ namespace GART.Controls
         }
         #endif
 
-        #if WP7
+        #if WINDOWS_PHONE
         private void motion_CurrentValueChanged(object sender, SensorReadingEventArgs<MotionReading> e)
         {
             // This event arrives on a background thread. Use BeginInvoke to call
@@ -616,7 +632,9 @@ namespace GART.Controls
                 this.AttitudeHeading = MathHelper.ToDegrees(mr.Attitude.Yaw);
             });
         }
-#else
+        #endif
+
+        #if WIN_RT
         private void motion_ReadingChanged(Inclinometer sender, InclinometerReadingChangedEventArgs args)
         {
             // This event arrives on a background thread. Use Dispatcher to call
@@ -730,9 +748,11 @@ namespace GART.Controls
             {
                 if (CameraEnabled)
                 {
-                    #if WP7
+                    #if WINDOWS_PHONE
                     StartCamera();
-                    #else
+                    #endif
+
+                    #if WIN_RT
                     var t = StartCamera();
                     #endif
                 }
@@ -795,9 +815,11 @@ namespace GART.Controls
             {
                 if (LocationEnabled)
                 {
-                    #if WP7
+                    #if WINDOWS_PHONE
                     StartLocation();
-                    #else
+                    #endif
+
+                    #if WIN_RT
                     var t = StartLocation();
                     #endif
                 }
@@ -888,7 +910,7 @@ namespace GART.Controls
             // Need to handle videobrush rotation as well:
             ControlOrientation newOrientation = (ControlOrientation)(e.NewValue);
 
-            #if WP7
+            #if WINDOWS_PHONE
             CompositeTransform orientationRotation; 
             switch (newOrientation)
             {
@@ -907,8 +929,9 @@ namespace GART.Controls
 
             // Update our dependency property
             VideoSource.RelativeTransform = orientationRotation;
+            #endif
 
-            #else
+            #if WIN_RT
             VideoRotation orientationRotation = VideoRotation.None;
             switch (newOrientation)
             {
@@ -932,9 +955,10 @@ namespace GART.Controls
         /// <summary>
         /// Starts any enabled AR services (Motion, Camera, etc)
         /// </summary>
-        #if WP7
+        #if WINDOWS_PHONE
         public void StartServices()
-        #else
+        #endif
+        #if WIN_RT
         public async Task StartServices()
         #endif
         {
@@ -949,17 +973,21 @@ namespace GART.Controls
 
             if (CameraEnabled)
             {
-                #if WP7
+                #if WINDOWS_PHONE
                 StartCamera();
-                #else
+                #endif
+                
+                #if WIN_RT
                 await StartCamera();
                 #endif
             }
             if (LocationEnabled)
             {
-                #if WP7
+                #if WINDOWS_PHONE
                 StartLocation();
-                #else
+                #endif
+
+                #if WIN_RT
                 await StartLocation();
                 #endif
             }
@@ -1008,7 +1036,7 @@ namespace GART.Controls
         /// <value>
         /// The collection of ARItems rendered by the <see cref="ARDisplay"/>.
         /// </value>
-        #if WP7
+        #if WINDOWS_PHONE
         [Category("AR")]
         #endif
         public ObservableCollection<ARItem> ARItems
@@ -1029,7 +1057,7 @@ namespace GART.Controls
         /// <value>
         /// A matrix that represents where the user is looking.
         /// </value>
-        #if WP7
+        #if WINDOWS_PHONE
         [Category("AR")]
         #endif
         public Matrix Attitude
@@ -1050,7 +1078,7 @@ namespace GART.Controls
         /// <value>
         /// <c>true</c> if the camera preview is enabled; otherwise <c>false</c>.
         /// </value>
-        #if WP7
+        #if WINDOWS_PHONE
         [Category("AR")]
         #endif
         public bool CameraEnabled
@@ -1065,7 +1093,7 @@ namespace GART.Controls
             }
         }
 
-        #if !WP7
+        #if WIN_RT
         /// <summary>
         /// Gets or sets the ID of the camera device to use.
         /// </summary>
@@ -1081,7 +1109,7 @@ namespace GART.Controls
         /// <value>
         /// The direction the user is looking in degrees.
         /// </value>
-        #if WP7
+        #if WINDOWS_PHONE
         [Category("AR")]
         #endif
         public double AttitudeHeading
@@ -1102,7 +1130,7 @@ namespace GART.Controls
         /// <value>
         /// The location of the user in Geo space.
         /// </value>
-        #if WP7
+        #if WINDOWS_PHONE
         [Category("AR")]
         #endif
         public Location Location
@@ -1123,7 +1151,7 @@ namespace GART.Controls
         /// <value>
         /// <c>true</c> if Location tracking is enabled; otherwise <c>false</c>.
         /// </value>
-        #if WP7
+        #if WINDOWS_PHONE
         [Category("AR")]
         #endif
         public bool LocationEnabled
@@ -1141,7 +1169,7 @@ namespace GART.Controls
         /// <summary>
         /// Gets the <see cref="Motion"/> instance used by the ARDisplay.
         /// </summary>
-        #if WP7
+        #if WINDOWS_PHONE
         [Category("AR")]
         #endif
         public Motion Motion
@@ -1158,7 +1186,7 @@ namespace GART.Controls
         /// <value>
         /// <c>true</c> if motion tracking is enabled; otherwise <c>false</c>.
         /// </value>
-        #if WP7
+        #if WINDOWS_PHONE
         [Category("AR")]
         #endif
         public bool MotionEnabled
@@ -1174,7 +1202,7 @@ namespace GART.Controls
         }
 
 
-        #if WP7
+        #if WINDOWS_PHONE
         [Category("AR")]
         #endif
         public ControlOrientation Orientation
@@ -1186,7 +1214,7 @@ namespace GART.Controls
         /// <summary>
         /// Gets the PhotoCamera used by the ARDisplay.
         /// </summary>
-        #if WP7
+        #if WINDOWS_PHONE
         [Category("AR")]
         public PhotoCamera PhotoCamera
         {
@@ -1201,7 +1229,7 @@ namespace GART.Controls
         /// Gets a value that indicates if AR services (Motion, Camera, etc.) have been started.
         /// </summary>
         /// <value><c>true</c> if AR services have been started; otherwise <c>false</c>.</value>
-        #if WP7
+        #if WINDOWS_PHONE
         [Category("AR")]
         #endif
         public bool ServicesRunning
@@ -1218,7 +1246,7 @@ namespace GART.Controls
         /// <value>
         /// The direction the user is traveling in degrees.
         /// </value>
-        #if WP7
+        #if WINDOWS_PHONE
         [Category("AR")]
         #endif
         public double TravelHeading
@@ -1239,7 +1267,7 @@ namespace GART.Controls
         /// <value>
         /// The video source for the camera.
         /// </value>
-        #if WP7
+        #if WINDOWS_PHONE
         [Category("AR")]
         #endif
         public VideoSource VideoSource
@@ -1257,7 +1285,7 @@ namespace GART.Controls
         /// <summary>
         /// Gets the collection of child views associated with this display.
         /// </summary>
-        #if WP7
+        #if WINDOWS_PHONE
         [Category("AR")]
         #endif
         public ObservableCollection<IARView> Views
