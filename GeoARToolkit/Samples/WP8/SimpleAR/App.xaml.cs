@@ -34,9 +34,7 @@ namespace SimpleAR
 
             // Language display initialization
             InitializeLanguage();
-
-            GART.Controls.OverheadMap map = new GART.Controls.OverheadMap();
-
+            
             // Show graphics profiling information while debugging.
             if (Debugger.IsAttached)
             {

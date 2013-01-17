@@ -47,6 +47,7 @@
 
     <Style TargetType="controls:OverheadMap">
         <Setter Property="RotationSource" Value="North" />
+        <Setter Property="InvertRotation" Value="True" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="controls:OverheadMap">
@@ -60,17 +61,21 @@
                         <maps:Map x:Name="Map" 
                                   HorizontalAlignment="Stretch" 
                                   VerticalAlignment="Stretch"
-                                  Margin="-320"
                                   Center="{Binding Location, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}"
                                   ZoomLevel="{Binding ZoomLevel, Converter={StaticResource PercentBingZoomConverter}, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}" 
-                                  RenderTransformOrigin="0.5,0.5">
-                            <maps:Map.RenderTransform>
-                                <RotateTransform Angle="{Binding Rotation, RelativeSource={RelativeSource TemplatedParent}}" />
-                            </maps:Map.RenderTransform>
+                                  >
                             <maptk:MapExtensions.Children>
-                                <maptk:MapItemsControl Name="ItemsLayer" ItemTemplate="{StaticResource MapShape}" ItemsSource="{Binding}">
+                                <maptk:MapItemsControl Name="StoresMapItemsControl" ItemsSource="{Binding}">
+                                    <maptk:MapItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <maptk:Pushpin GeoCoordinate="{Binding GeoLocation}" Visibility="Visible" Content="Hello"/>
+                                        </DataTemplate>
+                                    </maptk:MapItemsControl.ItemTemplate>
                                 </maptk:MapItemsControl>
-                                <maptk:UserLocationMarker x:Name="UserLocationMarker" Visibility="Collapsed"/>
+                                
+                                <!--<maptk:MapItemsControl Name="ItemsLayer" ItemTemplate="{StaticResource MapShape}" ItemsSource="{Binding}">
+                                </maptk:MapItemsControl>-->
+                                <maptk:UserLocationMarker x:Name="UserLocationMarker" Visibility="Visible" GeoCoordinate="{Binding Location, RelativeSource={RelativeSource TemplatedParent}}"/>
                             </maptk:MapExtensions.Children>
 
                         </maps:Map>

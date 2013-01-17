@@ -30,7 +30,7 @@
     <Grid x:Name="LayoutRoot">
         <ARControls:ARDisplay x:Name="ARDisplay" d:LayoutOverrides="Width">
             <ARControls:VideoPreview x:Name="VideoPreview" />
-            <!--<ARControls:OverheadMap x:Name="OverheadMap" />-->
+            <ARControls:OverheadMap x:Name="OverheadMap" />
             <ARControls:WorldView x:Name="WorldView" />
             <ARControls:HeadingIndicator x:Name="HeadingIndicator" HorizontalAlignment="Center" VerticalAlignment="Center" />
         </ARControls:ARDisplay>

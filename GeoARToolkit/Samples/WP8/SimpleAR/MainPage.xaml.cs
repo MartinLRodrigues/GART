@@ -26,6 +26,7 @@ namespace SimpleAR
         public MainPage()
         {
             InitializeComponent();
+            AddNearbyLabels();
 
             // Sample code to localize the ApplicationBar
             //BuildLocalizedApplicationBar();
@@ -75,11 +76,11 @@ namespace SimpleAR
             if (HeadingIndicator.RotationSource == RotationSource.AttitudeHeading)
             {
                 HeadingIndicator.RotationSource = RotationSource.North;
-                // OverheadMap.RotationSource = RotationSource.AttitudeHeading;
+                OverheadMap.RotationSource = RotationSource.AttitudeHeading;
             }
             else
             {
-                // OverheadMap.RotationSource = RotationSource.North;
+                OverheadMap.RotationSource = RotationSource.North;
                 HeadingIndicator.RotationSource = RotationSource.AttitudeHeading;
             }
         }
@@ -143,7 +144,7 @@ namespace SimpleAR
 
         private void MapButton_Click(object sender, System.EventArgs e)
         {
-            // UIHelper.ToggleVisibility(OverheadMap);
+            UIHelper.ToggleVisibility(OverheadMap);
         }
 
         private void RotateButton_Click(object sender, System.EventArgs e)

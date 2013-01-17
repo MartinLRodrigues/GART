@@ -145,8 +145,11 @@ namespace GART.Controls
             #endif
 
             #if WP8
-            MapsSettings.ApplicationContext.ApplicationId = credentials.ApplicationId;
-            MapsSettings.ApplicationContext.AuthenticationToken = credentials.AuthenticationToken;
+            if (credentials != null)
+            {
+                MapsSettings.ApplicationContext.ApplicationId = credentials.ApplicationId;
+                MapsSettings.ApplicationContext.AuthenticationToken = credentials.AuthenticationToken;
+            }
             #endif
             
             #if WIN_RT
@@ -202,6 +205,18 @@ namespace GART.Controls
             // Update the margin
             UpdateMargin();
         }
+
+        #if WP8
+        // The WP8 version of the map control does not allow heading to be data bound
+        protected override void OnRotationChanged(DependencyPropertyChangedEventArgs e)
+        {
+            base.OnRotationChanged(e);
+            if (map != null)
+            {
+                map.Heading = Rotation;
+            }
+        }
+        #endif
         #endregion // Overrides / Event Handlers
 
         #region Overridables / Event Triggers
