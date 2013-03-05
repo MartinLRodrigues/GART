@@ -107,14 +107,6 @@ namespace GART.Controls
                 Vector3 cameraUpVector = Vector3.Up;
                 switch (currentOrientation)
                 {
-                    case ControlOrientation.Default:
-                        #if WP7
-                        cameraUpVector = Vector3.Up;
-                        #else
-                        cameraUpVector = Vector3.Down;
-                        #endif
-                        break;
-
                     case ControlOrientation.Clockwise270Degrees:
                         cameraUpVector = Vector3.Right;
                         break;
@@ -122,11 +114,6 @@ namespace GART.Controls
                     case ControlOrientation.Clockwise90Degrees:
                         cameraUpVector = Vector3.Left;
                         break;
-
-                    default:
-                        cameraUpVector = Vector3.Down;
-                        break;
-
                 }
 
                 view = Matrix.CreateLookAt(new Vector3(0, 0, 1), Vector3.Zero, cameraUpVector);
