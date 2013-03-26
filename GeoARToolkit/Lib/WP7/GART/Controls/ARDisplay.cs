@@ -1051,6 +1051,24 @@ namespace GART.Controls
             }
         }
 
+
+        public void HandleOrientationChange(OrientationChangedEventArgs args)
+        {
+            ControlOrientation orientation = ControlOrientation.Default;
+
+            switch (args.Orientation)
+            {
+                case PageOrientation.LandscapeLeft:
+                    orientation = ControlOrientation.Clockwise270Degrees;
+                    break;
+                case PageOrientation.LandscapeRight:
+                    orientation = ControlOrientation.Clockwise90Degrees;
+                    break;
+            }
+
+            Orientation = orientation;
+        }
+
         /// <summary>
         /// Gets or sets a matrix that represents where the user is looking. This is a dependency property.
         /// </summary>

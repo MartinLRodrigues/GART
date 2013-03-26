@@ -217,20 +217,7 @@ namespace BingAR
         protected override void OnOrientationChanged(OrientationChangedEventArgs e)
         {
             base.OnOrientationChanged(e);
-
-            ControlOrientation orientation = ControlOrientation.Default;
-
-            switch (e.Orientation)
-            {
-                case PageOrientation.LandscapeLeft:
-                    orientation = ControlOrientation.Clockwise270Degrees;
-                    break;
-                case PageOrientation.LandscapeRight:
-                    orientation = ControlOrientation.Clockwise90Degrees;
-                    break;
-            }
-
-            ARDisplay.Orientation = orientation;
+            ARDisplay.HandleOrientationChange(e);
         }
 
         private void HeadingButton_Click(object sender, System.EventArgs e)
