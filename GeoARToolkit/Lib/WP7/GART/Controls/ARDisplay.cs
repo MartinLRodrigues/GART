@@ -195,6 +195,7 @@ namespace GART.Controls
         #if WINDOWS_PHONE
         private GeoCoordinateWatcher locationService;
         private Motion motion;
+        private Compass compass;
         private PhotoCamera photoCamera;
         #endif
 
@@ -503,6 +504,27 @@ namespace GART.Controls
                 {
                     serviceErrors.Add(new ServiceErrorData(ARService.Motion, ex));
                 }
+
+                // If the Motion object is null, initialize it and add a CurrentValueChanged
+                // event handler.
+                if (compass == null)
+                {
+                    compass = new Compass();
+                    compass.TimeBetweenUpdates = TimeSpan.FromMilliseconds(500);
+                    compass.CurrentValueChanged += compass_CurrentValueChanged;
+                }
+
+                // Try to start the Motion API.
+                try
+                {
+                    compass.Start();
+                }
+                catch (Exception ex)
+                {
+                    serviceErrors.Add(new ServiceErrorData(ARService.Motion, ex));
+                }
+
+
             }
             else
             {
@@ -597,6 +619,15 @@ namespace GART.Controls
         #endif
 
         #if WINDOWS_PHONE
+
+        void compass_CurrentValueChanged(object sender, SensorReadingEventArgs<CompassReading> e)
+        {
+            Dispatcher.BeginInvoke(() =>
+            {
+                this.AttitudeHeading = e.SensorReading.TrueHeading;
+            });
+        }
+        
         private void motion_CurrentValueChanged(object sender, SensorReadingEventArgs<MotionReading> e)
         {
             // This event arrives on a background thread. Use BeginInvoke to call
@@ -629,7 +660,6 @@ namespace GART.Controls
                     mr.Attitude.RotationMatrix.M43,
                     mr.Attitude.RotationMatrix.M44);
 
-                this.AttitudeHeading = MathHelper.ToDegrees(mr.Attitude.Yaw);
             });
         }
         #endif
@@ -1052,6 +1082,8 @@ namespace GART.Controls
         }
 
 
+#if WP7
+
         public void HandleOrientationChange(OrientationChangedEventArgs args)
         {
             ControlOrientation orientation = ControlOrientation.Default;
@@ -1068,6 +1100,8 @@ namespace GART.Controls
 
             Orientation = orientation;
         }
+
+#endif // WP7
 
         /// <summary>
         /// Gets or sets a matrix that represents where the user is looking. This is a dependency property.

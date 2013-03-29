@@ -132,16 +132,13 @@ namespace GART.Controls
             switch (currentOrientation)
             {
                 case ControlOrientation.Clockwise270Degrees:
-                    angle -= 90;
+                    angle += 90;
                     break;
 
                 case ControlOrientation.Clockwise90Degrees:
-                    angle += 90;
+                    angle -= 90;
                     break;
             }
-
-            // Invert?
-            if (InvertRotation) { angle = 360 - angle; }
 
             // Assign
             Rotation = angle;

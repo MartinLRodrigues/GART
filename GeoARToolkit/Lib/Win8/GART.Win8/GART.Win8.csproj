@@ -209,12 +209,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\..\..\..\Documents\GitHub\MonoGame\MonoGame.Framework\MonoGame.Framework.Windows8.csproj">
-      <Project>{5c7acd75-8dc2-490f-9a94-d3b8064d9e12}</Project>
-      <Name>MonoGame.Framework.Windows8</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <Page Include="Themes\Generic.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
