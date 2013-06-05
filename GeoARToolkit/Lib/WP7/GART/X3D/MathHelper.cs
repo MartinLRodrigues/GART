@@ -15,5 +15,10 @@ namespace GART.X3D
             return (degrees * 0.01745329f);
         }
 
+        public static float Lerp(float lower, float upper, float amount)
+        {
+            return (lower + (upper - lower) * amount);
+        }
+
     }
 }

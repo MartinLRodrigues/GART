@@ -67,9 +67,8 @@ namespace GART.Controls
         #endregion // Part Names
 
         #region Constants
-        private const float NearClippingPlane = 1;
-        private const float FarClippingPlane = 275; // Just over 300 yards
         #endregion // Constants
+
         #endregion // Static Version
 
         #region Instance Version
@@ -79,6 +78,9 @@ namespace GART.Controls
         Matrix view;
         ControlOrientation previousOrientation;
         ControlOrientation currentOrientation;
+        private float NearClippingPlane = 1;
+        private float FarClippingPlane = 275; // Just over 300 yards
+
         #endregion // Member Variables
 
         #region Constructors
@@ -218,7 +220,8 @@ namespace GART.Controls
                     ct.TranslateY = projected.Y - (wvItem.ActualHeight / 2);
 
                     // Scale should be 100% at near clipping plane and 10% at far clipping plane
-                    double scale = (FarClippingPlane - Math.Abs(arItem.WorldLocation.Z)) / FarClippingPlane;
+                    double scale = (double)(MathHelper.Lerp(0.1f, 1.0f, (FarClippingPlane - Math.Abs(arItem.WorldLocation.Z)) / FarClippingPlane));
+                    
                     ct.ScaleX = scale;
                     ct.ScaleY = scale;
 
