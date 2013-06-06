@@ -536,14 +536,14 @@ namespace GART.Controls
             motion = Inclinometer.GetDefault();
             if (motion != null)
             {
-                motion.ReportInterval = 20;
+                motion.ReportInterval = (motion.MinimumReportInterval < 20) ? 20 : motion.MinimumReportInterval;
                 motion.ReadingChanged += motion_ReadingChanged;
             }
             else
             {
                 serviceErrors.Add(new ServiceErrorData(ARService.Motion, new InvalidOperationException("Inclinometer is not supported on this device.")));
             }
-            #endif
+#endif
         }
 
         private void StopCamera()

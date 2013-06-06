@@ -78,8 +78,9 @@ namespace GART.Controls
         Matrix view;
         ControlOrientation previousOrientation;
         ControlOrientation currentOrientation;
-        private float NearClippingPlane = 1;
-        private float FarClippingPlane = 275; // Just over 300 yards
+        private float nearClippingPlane = 1;
+        private float farClippingPlane = 275; // Just over 300 yards
+        private bool viewPortNeedsRebuilding = true;
 
         #endregion // Member Variables
 
@@ -87,6 +88,13 @@ namespace GART.Controls
         public WorldView()
         {
             DefaultStyleKey = typeof(WorldView);
+
+            #if WIN_RT
+            this.SizeChanged += (s, a) =>
+            {
+                EnsureViewport();
+            };
+            #endif
         }
         #endregion // Constructors
 
@@ -94,13 +102,14 @@ namespace GART.Controls
         private void EnsureViewport()
         {
             // Only do this once
-            if (viewport.Width == 0 || previousOrientation != currentOrientation)
+            if (viewport.Width == 0 || previousOrientation != currentOrientation || viewPortNeedsRebuilding)
             {
                 // Initialize the viewport and matrixes for 3d projection.
                 // Create the ViewPort based on the size of ourselves (the view) and not the screen. That's 
                 // becase the View should be sized to the camera preview, which is not the same size as 
                 // the Page or Window.
                 viewport = new Viewport(0, 0, (int)this.ActualWidth, (int)this.ActualHeight);
+                viewPortNeedsRebuilding = false;
 
                 float aspect = viewport.AspectRatio;
                 projection = Matrix.CreatePerspectiveFieldOfView(1, aspect, NearClippingPlane, FarClippingPlane);
@@ -239,6 +248,24 @@ namespace GART.Controls
         #endregion // Overridables / Event Triggers
 
         #region Public Methods
+
+        /// <summary>
+        /// Triggers the rebuild of viewport
+        /// </summary>
+        public void RebuildViewport()
+        {
+            InvalidateViewport();
+            EnsureViewport();
+        }
+
+        /// <summary>
+        /// Invalidates the viewport. A rebuild will be triggered during next EnsureViewport() call
+        /// </summary>
+        public void InvalidateViewport()
+        {
+            viewPortNeedsRebuilding = true;
+        }
+
         /// <summary>
         /// Converts the screen coordinates to world coordiantes using the specified attitude matrix.
         /// </summary>
@@ -301,6 +328,44 @@ namespace GART.Controls
             return ScreenToWorld(pointOnScreen, Attitude);
         }
         #endregion // Public Methods
+
+        #region Public Properties
+
+        /// <summary>
+        /// Sets the near clipping plane distance (in meters). Must me >= 0.0 and less than <see cref="FarClippingPlane"/>.
+        /// Invalidates the viewport.
+        /// </summary>
+        public float NearClippingPlane
+        {
+            get { return nearClippingPlane; }
+            set
+            {
+                if (value != nearClippingPlane && value < FarClippingPlane && value >= 0.0f)
+                {
+                    nearClippingPlane = value;
+                    InvalidateViewport();
+                }
+            }
+        }
+
+        /// <summary>
+        /// Sets the far clipping plane distance (in meters). Must be > than <see cref="NearClippingPlane"/>.
+        /// Invalidates the viewport.
+        /// </summary>
+        public float FarClippingPlane
+        {
+            get { return farClippingPlane; }
+            set
+            {
+                if (value != farClippingPlane && value > NearClippingPlane)
+                {
+                    farClippingPlane = value;
+                    InvalidateViewport();
+                }
+            }
+        }
+
+        #endregion // Public Properties
 
         #endregion // Instance Version
     }

@@ -62,11 +62,11 @@ namespace GART.Data
         static public Matrix EmptyMatrix = new Matrix();
         #if WP7
         static public Location DefaultStartLocation = new Location() { Latitude = 29.75770, Longitude = -95.36089, Altitude = 0 };
-        static public Location NorthPole = new Location() { Latitude = 0, Longitude = 90, Altitude = 0 };
+        static public Location NorthPole = new Location() { Latitude = 90, Longitude = 90, Altitude = 0 };
         static public VideoSource DefaultVideoSource = new SolidColorBrush(Colors.Magenta);
         #else
         static public Location DefaultStartLocation = new Location() { Latitude = 29.75770, Longitude = -95.36089 };
-        static public Location NorthPole = new Location() { Latitude = 0, Longitude = 90 };
+        static public Location NorthPole = new Location() { Latitude = 90, Longitude = 90 };
         static public VideoSource DefaultVideoSource = null;
         #endif
         #endregion // Constants
