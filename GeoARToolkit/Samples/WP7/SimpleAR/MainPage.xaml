@@ -33,7 +33,7 @@
 	</phone:PhoneApplicationPage.ApplicationBar>
 
     <Grid x:Name="LayoutRoot">
-		<ARControls:ARDisplay x:Name="ARDisplay" d:LayoutOverrides="Width">
+        <ARControls:ARDisplay x:Name="ARDisplay" d:LayoutOverrides="Width" AttitudeRefreshRate="250" >
 			<ARControls:VideoPreview x:Name="VideoPreview" />
 			<ARControls:OverheadMap x:Name="OverheadMap" Credentials="{StaticResource BingCredentials}" />
 			<ARControls:WorldView x:Name="WorldView" />

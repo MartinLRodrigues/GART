@@ -201,7 +201,9 @@ namespace GART.Controls
 
         #if WIN_RT
         private Geolocator locationService;
-        private Inclinometer motion;
+        // Ricky: Use Orientation & SimpleOrientation Sensor
+        private OrientationSensor motion;
+        private SimpleOrientationSensor simpleMotion;
         #endif
 
         private Collection<ServiceErrorData> serviceErrors = new Collection<ServiceErrorData>();
@@ -442,7 +444,7 @@ namespace GART.Controls
                 #if WINDOWS_PHONE
 
                 locationService = new GeoCoordinateWatcher(GeoPositionAccuracy.High);
-                locationService.MovementThreshold = 0; // TODO: Do we leave this? High battery cost but most accurate AR simulation
+                locationService.MovementThreshold = MovementThreshold;
                 locationService.PositionChanged += location_PositionChanged;
 
                 // Try to start the Motion API.
@@ -462,7 +464,7 @@ namespace GART.Controls
 
                 #if WIN_RT
                 locationService = new Geolocator();
-                locationService.MovementThreshold = 0; // TODO: Do we leave this? High battery cost but most accurate AR simulation
+                locationService.MovementThreshold = MovementThreshold;
                 locationService.PositionChanged += location_PositionChanged;
 
                 // Grab location once?
@@ -476,7 +478,7 @@ namespace GART.Controls
                 {
                     serviceErrors.Add(new ServiceErrorData(ARService.Location, ex));
                 }
-                #endif
+#endif
             }
         }
 
@@ -510,7 +512,7 @@ namespace GART.Controls
                 if (compass == null)
                 {
                     compass = new Compass();
-                    compass.TimeBetweenUpdates = TimeSpan.FromMilliseconds(500);
+                    compass.TimeBetweenUpdates = TimeSpan.FromMilliseconds(AttitudeRefreshRate);
                     compass.CurrentValueChanged += compass_CurrentValueChanged;
                 }
 
@@ -533,33 +535,53 @@ namespace GART.Controls
             #endif
 
             #if WIN_RT
-            motion = Inclinometer.GetDefault();
+            // Ricky: Switch to orienation sensor
+            motion = OrientationSensor.GetDefault();
             if (motion != null)
             {
+                // Ricky: motion.ReportInterval = 20;
                 motion.ReportInterval = (motion.MinimumReportInterval < 20) ? 20 : motion.MinimumReportInterval;
-                motion.ReadingChanged += motion_ReadingChanged;
+                motion.ReadingChanged += motion_CurrentValueChanged;
             }
             else
             {
-                serviceErrors.Add(new ServiceErrorData(ARService.Motion, new InvalidOperationException("Inclinometer is not supported on this device.")));
+                // Ricky: Update message to state Orientation Sensor
+                serviceErrors.Add(new ServiceErrorData(ARService.Motion, new InvalidOperationException("Orientation Sensor is not supported on this device.")));
             }
-#endif
+
+            // Ricky: Add Simple Orientation Sensor
+            simpleMotion = SimpleOrientationSensor.GetDefault();
+            if (simpleMotion != null)
+            {
+                simpleMotion.OrientationChanged += simpleMotion_OrientationChanged;
+            }
+            #endif
         }
 
+    	#if WINDOWS_PHONE
         private void StopCamera()
         {
-            #if WINDOWS_PHONE
-            if (photoCamera != null)
+		    if (photoCamera != null)
             {
                 photoCamera.Dispose();
                 photoCamera = null;
             }
-            #endif
-
-            #if WIN_RT
-            VideoSource = null;
-            #endif
         }
+		#endif
+
+        #if WIN_RT
+        private async void StopCamera()
+        {
+
+            // Ricky: Stop the cemera if the video source is not null
+            if (VideoSource != null)
+            {
+                await VideoSource.StopPreviewAsync();
+                VideoSource = null;
+            }
+            
+        }
+		#endif
 
         private void StopLocation()
         {
@@ -579,8 +601,10 @@ namespace GART.Controls
             motion.CurrentValueChanged -= motion_CurrentValueChanged;
             motion.Stop();
             motion.Dispose();
-            #else
-            motion.ReadingChanged -= motion_ReadingChanged;
+            #else // WIN_RT
+            // Ricky: Changed event name for switch to Orientation Sensor
+            motion.ReadingChanged -= motion_CurrentValueChanged;
+            simpleMotion.OrientationChanged -= simpleMotion_OrientationChanged;
             #endif
 
             motion = null;
@@ -665,18 +689,46 @@ namespace GART.Controls
         #endif
 
         #if WIN_RT
-        private void motion_ReadingChanged(Inclinometer sender, InclinometerReadingChangedEventArgs args)
+        //private void motion_ReadingChanged(Inclinometer sender, InclinometerReadingChangedEventArgs args)
+        private void motion_CurrentValueChanged(OrientationSensor sender, OrientationSensorReadingChangedEventArgs args)
         {
             // This event arrives on a background thread. Use Dispatcher to call
             // CurrentValueChanged on the UI thread.
             var t = Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
-                {
-                    var r = args.Reading;
+            {
+                var r = args.Reading;
 
-                    // PORT: Is this the correct way to setup a rotation matrix? It is used by WorldView.OnAttitudeChanged
-                    this.Attitude = Matrix.CreateFromYawPitchRoll(MathHelper.ToRadians(r.YawDegrees), MathHelper.ToRadians(r.PitchDegrees), MathHelper.ToRadians(r.RollDegrees));
-                    this.AttitudeHeading = r.YawDegrees;
-                });
+                // Ricky:  Use the rotation matrix from the orienation sensor
+                this.Attitude = new Matrix(r.RotationMatrix);
+
+                //http://planning.cs.uiuc.edu/node103.html
+                double yawRadians = Math.Atan2(Attitude.M21, Attitude.M11);
+                this.AttitudeHeading = (360 - MathHelper.ToDegrees((float)yawRadians))%360;
+            });
+        }
+
+        // Ricky: Added event handler for simple Orientation sensor.
+        private void simpleMotion_OrientationChanged(SimpleOrientationSensor sender, SimpleOrientationSensorOrientationChangedEventArgs args)
+        {
+            var t = Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
+            {
+                switch (args.Orientation)
+                {
+                    case SimpleOrientation.Rotated90DegreesCounterclockwise:
+                        Orientation = ControlOrientation.Clockwise270Degrees;
+                        break;
+                    case SimpleOrientation.Rotated180DegreesCounterclockwise:
+                        Orientation = ControlOrientation.Clockwise180Degrees;
+                        break;
+                    case SimpleOrientation.Rotated270DegreesCounterclockwise:
+                        Orientation = ControlOrientation.Clockwise90Degrees;
+                        break;
+                    case SimpleOrientation.NotRotated:
+                    default:
+                        Orientation = ControlOrientation.Default;
+                        break;
+                }
+            });
         }
         #endif
 
@@ -969,15 +1021,21 @@ namespace GART.Controls
                     orientationRotation = VideoRotation.None;
                     break;
                 case ControlOrientation.Clockwise90Degrees:
-                    orientationRotation = VideoRotation.Clockwise270Degrees;
+                    orientationRotation = VideoRotation.Clockwise90Degrees;
+                    break;
+                case ControlOrientation.Clockwise180Degrees:
+                    orientationRotation = VideoRotation.Clockwise180Degrees;
                     break;
                 case ControlOrientation.Clockwise270Degrees:
-                    orientationRotation = VideoRotation.Clockwise90Degrees;
+                    orientationRotation = VideoRotation.Clockwise270Degrees;
                     break;
             } // end switch 
 
-            VideoSource.SetPreviewRotation(orientationRotation);
-            #endif
+            if (VideoSource != null)
+            {
+                VideoSource.SetPreviewRotation(orientationRotation);
+            }
+#endif
         }
         #endregion // Overridables / Event Triggers
 
@@ -1040,6 +1098,9 @@ namespace GART.Controls
         {
             // If services are not started, ignore
             if (!servicesRunning) { return; }
+
+            // Not started
+            servicesRunning = false;
 
             if (CameraEnabled)
             {
@@ -1223,8 +1284,11 @@ namespace GART.Controls
         /// </summary>
         #if WINDOWS_PHONE
         [Category("AR")]
-        #endif
         public Motion Motion
+        #elif WIN_RT
+        public OrientationSensor Motion
+        #endif
+
         {
             get
             {
@@ -1348,6 +1412,52 @@ namespace GART.Controls
             }
         }
         #endregion // Public Properties
+
+        #if WINDOWS_PHONE
+        private int attitudeRefreshRate = 500;
+
+        /// <summary>
+        /// Defines time between updates used for reading attitude heading from compass.
+        /// WindowsPhone only.
+        /// </summary>
+        public int AttitudeRefreshRate
+        {
+            get { return attitudeRefreshRate; }
+            set
+            {
+                if (value != attitudeRefreshRate && value > 0)
+                {
+                    attitudeRefreshRate = value;
+                    if (compass != null)
+                    {
+                        compass.TimeBetweenUpdates = TimeSpan.FromMilliseconds(attitudeRefreshRate);
+                    }
+                }
+            }
+        }
+
+        #endif  //WINDOWS_PHONE
+
+        private int movementThreshold = 10;
+
+        /// <summary>
+        /// Set the movement threshold on location service. Default value = 10
+        /// </summary>
+        public int MovementThreshold
+        {
+            get { return movementThreshold; }
+            set
+            {
+                if (value != movementThreshold && value > 0)
+                {
+                    movementThreshold = value;
+                    if (locationService != null)
+                    {
+                        locationService.MovementThreshold = movementThreshold;
+                    }
+                }
+            }
+        }
 
         #region Public Events
         /// <summary>

@@ -81,6 +81,8 @@ namespace GART.Controls
         private float nearClippingPlane = 1;
         private float farClippingPlane = 275; // Just over 300 yards
         private bool viewPortNeedsRebuilding = true;
+        private float minItemScale = 0.1f;
+        private float maxItemScale = 1.0f;
 
         #endregion // Member Variables
 
@@ -92,7 +94,7 @@ namespace GART.Controls
             #if WIN_RT
             this.SizeChanged += (s, a) =>
             {
-                EnsureViewport();
+                RebuildViewport();
             };
             #endif
         }
@@ -125,6 +127,12 @@ namespace GART.Controls
                     case ControlOrientation.Clockwise90Degrees:
                         cameraUpVector = Vector3.Left;
                         break;
+
+                    #if WIN_RT 
+                    case ControlOrientation.Clockwise180Degrees:
+                        cameraUpVector = Vector3.Down;
+                        break;
+                    #endif
                 }
 
                 view = Matrix.CreateLookAt(new Vector3(0, 0, 1), Vector3.Zero, cameraUpVector);
@@ -225,11 +233,29 @@ namespace GART.Controls
                     CompositeTransform ct = new CompositeTransform();
 
                     // Offset by half of the WorldViewItems size to center it on the point
+					
+					// TODO: Expose vertical limit property
+					#if WIN_RT
+					ct.TranslateX = projected.X - (wvItem.ActualWidth / 2) - (this.ActualWidth / 2);
+
+                    // Ricky; Keep the y value within the screen
+                    double y = projected.Y - (wvItem.ActualHeight / 2);
+                    double h2 = this.Height / 2;
+                    y = (y < -h2) ? -h2 : ((y > h2) ? h2 : y);
+                    ct.TranslateY = y;
+
+					#endif 
+					
+					#if WINDOWS_PHONE
+
                     ct.TranslateX = projected.X - (wvItem.ActualWidth / 2);
                     ct.TranslateY = projected.Y - (wvItem.ActualHeight / 2);
 
+					#endif
+
                     // Scale should be 100% at near clipping plane and 10% at far clipping plane
-                    double scale = (double)(MathHelper.Lerp(0.1f, 1.0f, (FarClippingPlane - Math.Abs(arItem.WorldLocation.Z)) / FarClippingPlane));
+                    // TODO: Expose min and max scale via property
+					double scale = (double)(MathHelper.Lerp(MinItemScale, MaxItemScale, (FarClippingPlane - Math.Abs(arItem.WorldLocation.Z)) / FarClippingPlane));
                     
                     ct.ScaleX = scale;
                     ct.ScaleY = scale;
@@ -364,6 +390,36 @@ namespace GART.Controls
                 }
             }
         }
+
+        /// <summary>
+        /// Sets the default value for lower end of the scaling objects. Default is 0.1f
+        /// </summary>
+        public float MinItemScale
+        {
+            get { return minItemScale; }
+            set
+            {
+                if (value != minItemScale && value < MaxItemScale && value >= 0.0f)
+                {
+                    minItemScale = value;
+                }
+            }
+        }
+
+        public float MaxItemScale
+        {
+            get { return maxItemScale; }
+            set
+            {
+                if (value != maxItemScale && value > MinItemScale)
+                {
+                    maxItemScale = value;
+                }
+            }
+        }
+
+
+
 
         #endregion // Public Properties
 

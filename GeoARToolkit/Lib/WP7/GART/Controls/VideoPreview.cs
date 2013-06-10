@@ -26,6 +26,12 @@ using Windows.UI.Xaml.Controls;
 #endif
 
 using System;
+using GART.BaseControls;
+
+// Ricky: Add reference
+#if WIN_RT
+using Windows.Media.Capture;
+#endif
 
 namespace GART.Controls
 {
@@ -69,6 +75,9 @@ namespace GART.Controls
             {
                 throw new InvalidOperationException(string.Format("{0} template is invalid. A {1} named {2} must be supplied.", GetType().Name, typeof(CaptureElement).Name, PartNames.CaptureElement));
             }
+
+            // Ricky: Strech video so that it fills the screen when rotated.
+            captureElement.Stretch = Windows.UI.Xaml.Media.Stretch.UniformToFill;
 
             // Set video source
             captureElement.Source = VideoSource;

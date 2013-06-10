@@ -47,7 +47,31 @@ namespace GART.X3D
             this.M44 = m44;
         }
 
+        // Ricky: Create a Matric out of a SensorRotationMatrix
+        #if WIN_RT
+        public Matrix(Windows.Devices.Sensors.SensorRotationMatrix sensorMatrix)
+        {
+            this.M11 = sensorMatrix.M11;
+            this.M12 = sensorMatrix.M12;
+            this.M13 = sensorMatrix.M13;
+            this.M14 = 0;
 
+            this.M21 = sensorMatrix.M21;
+            this.M22 = sensorMatrix.M22;
+            this.M23 = sensorMatrix.M23;
+            this.M24 = 0;
+
+            this.M31 = sensorMatrix.M31;
+            this.M32 = sensorMatrix.M32;
+            this.M33 = sensorMatrix.M33;
+            this.M34 = 0;
+
+            this.M41 = 0;
+            this.M42 = 0;
+            this.M43 = 0;
+            this.M44 = 1;
+        }
+        #endif
 
         public static Matrix CreatePerspectiveFieldOfView(float fieldOfView, float aspectRatio, float nearPlaneDistance, float farPlaneDistance)
         {

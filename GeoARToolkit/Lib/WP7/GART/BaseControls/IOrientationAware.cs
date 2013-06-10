@@ -42,6 +42,12 @@ namespace GART.BaseControls
         /// The control is rotated 270 degrees clockwise
         /// </summary>
         Clockwise270Degrees,
+
+        // Ricky: Add 180 degree rotation
+        /// <summary>
+        /// The control is rotated 180 degrees clockwise
+        /// </summary>
+        Clockwise180Degrees
     }
 
     /// <summary>
