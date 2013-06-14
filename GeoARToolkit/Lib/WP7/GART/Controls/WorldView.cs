@@ -78,11 +78,11 @@ namespace GART.Controls
         Matrix view;
         ControlOrientation previousOrientation;
         ControlOrientation currentOrientation;
-        private float nearClippingPlane = 1;
-        private float farClippingPlane = 275; // Just over 300 yards
+        private double nearClippingPlane = 1;
+        private double farClippingPlane = 275; // Just over 300 yards
         private bool viewPortNeedsRebuilding = true;
-        private float minItemScale = 0.1f;
-        private float maxItemScale = 1.0f;
+        private double minItemScale = 0.1;
+        private double maxItemScale = 1.0;
 
         #endregion // Member Variables
 
@@ -114,7 +114,7 @@ namespace GART.Controls
                 viewPortNeedsRebuilding = false;
 
                 float aspect = viewport.AspectRatio;
-                projection = Matrix.CreatePerspectiveFieldOfView(1, aspect, NearClippingPlane, FarClippingPlane);
+                projection = Matrix.CreatePerspectiveFieldOfView(1, aspect, (float)NearClippingPlane, (float)FarClippingPlane);
 
                 // Rotate items by adjusting camera's up vector
                 Vector3 cameraUpVector = Vector3.Up;
@@ -253,10 +253,12 @@ namespace GART.Controls
 
 					#endif
 
-                    // Scale should be 100% at near clipping plane and 10% at far clipping plane
-                    // TODO: Expose min and max scale via property
-					double scale = (double)(MathHelper.Lerp(MinItemScale, MaxItemScale, (FarClippingPlane - Math.Abs(arItem.WorldLocation.Z)) / FarClippingPlane));
-                    
+
+                    #if WP7
+                    double scale = MathHelper.Lerp((float)MinItemScale, (float)MaxItemScale, ((float)FarClippingPlane - Math.Abs(arItem.WorldLocation.Z)) / (float)FarClippingPlane);
+                    #else
+					double scale = MathHelper.Lerp(MinItemScale, MaxItemScale, (FarClippingPlane - Math.Abs(arItem.WorldLocation.Z)) / FarClippingPlane);
+                    #endif
                     ct.ScaleX = scale;
                     ct.ScaleY = scale;
 
@@ -361,12 +363,12 @@ namespace GART.Controls
         /// Sets the near clipping plane distance (in meters). Must me >= 0.0 and less than <see cref="FarClippingPlane"/>.
         /// Invalidates the viewport.
         /// </summary>
-        public float NearClippingPlane
+        public double NearClippingPlane
         {
             get { return nearClippingPlane; }
             set
             {
-                if (value != nearClippingPlane && value < FarClippingPlane && value >= 0.0f)
+                if (value != nearClippingPlane && value < FarClippingPlane && value >= 0.0)
                 {
                     nearClippingPlane = value;
                     InvalidateViewport();
@@ -378,7 +380,7 @@ namespace GART.Controls
         /// Sets the far clipping plane distance (in meters). Must be > than <see cref="NearClippingPlane"/>.
         /// Invalidates the viewport.
         /// </summary>
-        public float FarClippingPlane
+        public double FarClippingPlane
         {
             get { return farClippingPlane; }
             set
@@ -394,19 +396,19 @@ namespace GART.Controls
         /// <summary>
         /// Sets the default value for lower end of the scaling objects. Default is 0.1f
         /// </summary>
-        public float MinItemScale
+        public double MinItemScale
         {
             get { return minItemScale; }
             set
             {
-                if (value != minItemScale && value < MaxItemScale && value >= 0.0f)
+                if (value != minItemScale && value < MaxItemScale && value >= 0.0)
                 {
                     minItemScale = value;
                 }
             }
         }
 
-        public float MaxItemScale
+        public double MaxItemScale
         {
             get { return maxItemScale; }
             set

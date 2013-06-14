@@ -20,5 +20,10 @@ namespace GART.X3D
             return (lower + (upper - lower) * amount);
         }
 
+        public static double Lerp(double value1, double value2, double amount)
+        {
+            return (value1 + ((value2 - value1) * amount));
+        }
+
     }
 }
