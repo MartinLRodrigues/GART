@@ -104,7 +104,7 @@ namespace GART.Controls
 
         private static void OnOrientationChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            ((ARView)d).OnOrientationChange(e);
+            ((ARView)d).OnOrientationChanged(e);
         }
 
         /// <summary>
@@ -191,7 +191,7 @@ namespace GART.Controls
         /// Occurs when the value of the <see cref="Orientation" /> property has changed
         /// </summary>
         /// <param name="e"></param>
-        protected virtual void OnOrientationChange(DependencyPropertyChangedEventArgs e)
+        protected virtual void OnOrientationChanged(DependencyPropertyChangedEventArgs e)
         {
 
         }

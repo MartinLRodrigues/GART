@@ -167,7 +167,7 @@ namespace GART.Controls
         /// Occurs when the value of the <see cref="Orientation" /> property has changed
         /// </summary>
         /// <param name="e"></param>
-        protected override void OnOrientationChange(DependencyPropertyChangedEventArgs e)
+        protected override void OnOrientationChanged(DependencyPropertyChangedEventArgs e)
         {
             currentOrientation = (ControlOrientation)(e.NewValue);
         }

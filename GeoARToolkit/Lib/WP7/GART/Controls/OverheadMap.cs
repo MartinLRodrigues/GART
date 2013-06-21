@@ -21,11 +21,16 @@
  ******************************************************************************/
 #endregion // License
 
+#if WINDOWS_PHONE
+using System.Device.Location;
+#endif
+
 #if WP7
 using System.Windows.Media;
 using Microsoft.Phone.Controls.Maps;
 using Credentials = Microsoft.Phone.Controls.Maps.CredentialsProvider;
 using Microsoft.Phone.Controls.Maps.Design;
+using Microsoft.Phone.Controls.Maps.Platform;
 #endif
 
 #if WP8
@@ -33,6 +38,7 @@ using Credentials = GART.Controls.MapCredentials;
 using System.Windows.Media;
 using Microsoft.Phone.Maps;
 using Microsoft.Phone.Maps.Controls;
+using Location = System.Device.Location.GeoCoordinate;
 #endif
 
 #if WIN_RT
@@ -252,6 +258,21 @@ namespace GART.Controls
         #endregion // Overridables / Event Triggers
 
         #region Public Properties
+
+        protected override void OnOrientationChanged(DependencyPropertyChangedEventArgs e)
+        {
+            base.OnOrientationChanged(e);
+            if (map != null)
+            {
+                #if WP8
+                // WP8 seems to have problem with map after orientation change: map is decentered
+                // Reseting view seems to fix the problem
+                map.SetView(map.Center, map.ZoomLevel);    
+                #endif // WP8
+            }
+
+        }
+
         /// <summary>
         /// Gets or sets the collection of ARItem objects that should be rendered in the view.
         /// </summary>
