@@ -38,7 +38,9 @@ using Credentials = GART.Controls.MapCredentials;
 using System.Windows.Media;
 using Microsoft.Phone.Maps;
 using Microsoft.Phone.Maps.Controls;
+using Microsoft.Phone.Maps.Toolkit;
 using Location = System.Device.Location.GeoCoordinate;
+using System.Linq;
 #endif
 
 #if WIN_RT
@@ -167,6 +169,13 @@ namespace GART.Controls
 
             // Connect data
             map.DataContext = arItems;
+            #if WP8
+            // We must use the toolkit to get the child map items controls and set their items source properly
+            foreach (var itemsControl in MapExtensions.GetChildren(map).OfType<MapItemsControl>())
+            {
+                itemsControl.ItemsSource = arItems;
+            }
+            #endif
         
             #if WIN_RT
             // Set initial values for properties that can't be data bound in Windows 8

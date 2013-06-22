@@ -65,16 +65,7 @@
                                   ZoomLevel="{Binding ZoomLevel, Converter={StaticResource PercentBingZoomConverter}, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}" 
                                   >
                             <maptk:MapExtensions.Children>
-                                <maptk:MapItemsControl Name="StoresMapItemsControl" ItemsSource="{Binding}">
-                                    <maptk:MapItemsControl.ItemTemplate>
-                                        <DataTemplate>
-                                            <maptk:Pushpin GeoCoordinate="{Binding GeoLocation}" Visibility="Visible" Content="Hello"/>
-                                        </DataTemplate>
-                                    </maptk:MapItemsControl.ItemTemplate>
-                                </maptk:MapItemsControl>
-                                
-                                <!--<maptk:MapItemsControl Name="ItemsLayer" ItemTemplate="{StaticResource MapShape}" ItemsSource="{Binding}">
-                                </maptk:MapItemsControl>-->
+                                <maptk:MapItemsControl ItemTemplate="{StaticResource MapShape}"/>
                                 <maptk:UserLocationMarker x:Name="UserLocationMarker" Visibility="Visible" GeoCoordinate="{Binding Location, RelativeSource={RelativeSource TemplatedParent}}"/>
                             </maptk:MapExtensions.Children>
 
