@@ -1,0 +1,85 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Lib", "Lib", "{1F244F85-ED5B-4A60-8372-7FB29642ED67}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{D5A7EC5A-A34E-4776-AD0B-062D9883DC85}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "License", "License", "{13AED105-07F3-4658-B8E9-F3552813AFBC}"
+	ProjectSection(SolutionItems) = preProject
+		License\GeoARToolkit.licenseheader = License\GeoARToolkit.licenseheader
+		License\MS-LPL License.txt = License\MS-LPL License.txt
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Win8", "Win8", "{8BF673D7-C3BA-47DF-B330-047DEFC73418}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GART.Win8", "Lib\Win8\GART.Win8\GART.Win8.vs2013.csproj", "{AEB5E2AE-4ADE-45EA-BB17-3AA73EAFD38D}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Win8", "Win8", "{33ECDA2B-F55E-4186-BAA9-2DEED689044F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimpleAR", "Samples\Win8\SimpleAR\SimpleAR.vs2013.csproj", "{D2603EB8-807A-4679-88EB-8A37A90B0CFA}"
+EndProject
+Global
+	GlobalSection(TeamFoundationVersionControl) = preSolution
+		SccNumberOfProjects = 3
+		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
+		SccTeamFoundationServer = https://tfs.codeplex.com/tfs/tfs06
+		SccLocalPath0 = .
+		SccProjectUniqueName1 = Lib\\Win8\\GART.Win8\\GART.Win8.vs2013.csproj
+		SccProjectTopLevelParentUniqueName1 = GeoARToolkit.vs2013.sln
+		SccProjectName1 = Lib/Win8/GART.Win8
+		SccLocalPath1 = Lib\\Win8\\GART.Win8
+		SccProjectUniqueName2 = Samples\\Win8\\SimpleAR\\SimpleAR.vs2013.csproj
+		SccProjectTopLevelParentUniqueName2 = GeoARToolkit.vs2013.sln
+		SccProjectName2 = Samples/Win8/SimpleAR
+		SccLocalPath2 = Samples\\Win8\\SimpleAR
+	EndGlobalSection
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|ARM = Debug|ARM
+		Debug|x64 = Debug|x64
+		Debug|x86 = Debug|x86
+		Release|ARM = Release|ARM
+		Release|x64 = Release|x64
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{AEB5E2AE-4ADE-45EA-BB17-3AA73EAFD38D}.Debug|ARM.ActiveCfg = Debug|ARM
+		{AEB5E2AE-4ADE-45EA-BB17-3AA73EAFD38D}.Debug|ARM.Build.0 = Debug|ARM
+		{AEB5E2AE-4ADE-45EA-BB17-3AA73EAFD38D}.Debug|x64.ActiveCfg = Debug|x64
+		{AEB5E2AE-4ADE-45EA-BB17-3AA73EAFD38D}.Debug|x64.Build.0 = Debug|x64
+		{AEB5E2AE-4ADE-45EA-BB17-3AA73EAFD38D}.Debug|x86.ActiveCfg = Debug|x86
+		{AEB5E2AE-4ADE-45EA-BB17-3AA73EAFD38D}.Debug|x86.Build.0 = Debug|x86
+		{AEB5E2AE-4ADE-45EA-BB17-3AA73EAFD38D}.Release|ARM.ActiveCfg = Release|ARM
+		{AEB5E2AE-4ADE-45EA-BB17-3AA73EAFD38D}.Release|ARM.Build.0 = Release|ARM
+		{AEB5E2AE-4ADE-45EA-BB17-3AA73EAFD38D}.Release|x64.ActiveCfg = Release|x64
+		{AEB5E2AE-4ADE-45EA-BB17-3AA73EAFD38D}.Release|x64.Build.0 = Release|x64
+		{AEB5E2AE-4ADE-45EA-BB17-3AA73EAFD38D}.Release|x86.ActiveCfg = Release|x86
+		{AEB5E2AE-4ADE-45EA-BB17-3AA73EAFD38D}.Release|x86.Build.0 = Release|x86
+		{D2603EB8-807A-4679-88EB-8A37A90B0CFA}.Debug|ARM.ActiveCfg = Debug|ARM
+		{D2603EB8-807A-4679-88EB-8A37A90B0CFA}.Debug|ARM.Build.0 = Debug|ARM
+		{D2603EB8-807A-4679-88EB-8A37A90B0CFA}.Debug|x64.ActiveCfg = Debug|x64
+		{D2603EB8-807A-4679-88EB-8A37A90B0CFA}.Debug|x64.Build.0 = Debug|x64
+		{D2603EB8-807A-4679-88EB-8A37A90B0CFA}.Debug|x64.Deploy.0 = Debug|x64
+		{D2603EB8-807A-4679-88EB-8A37A90B0CFA}.Debug|x86.ActiveCfg = Debug|x86
+		{D2603EB8-807A-4679-88EB-8A37A90B0CFA}.Debug|x86.Build.0 = Debug|x86
+		{D2603EB8-807A-4679-88EB-8A37A90B0CFA}.Debug|x86.Deploy.0 = Debug|x86
+		{D2603EB8-807A-4679-88EB-8A37A90B0CFA}.Release|ARM.ActiveCfg = Release|ARM
+		{D2603EB8-807A-4679-88EB-8A37A90B0CFA}.Release|ARM.Build.0 = Release|ARM
+		{D2603EB8-807A-4679-88EB-8A37A90B0CFA}.Release|ARM.Deploy.0 = Release|ARM
+		{D2603EB8-807A-4679-88EB-8A37A90B0CFA}.Release|x64.ActiveCfg = Release|x64
+		{D2603EB8-807A-4679-88EB-8A37A90B0CFA}.Release|x64.Build.0 = Release|x64
+		{D2603EB8-807A-4679-88EB-8A37A90B0CFA}.Release|x64.Deploy.0 = Release|x64
+		{D2603EB8-807A-4679-88EB-8A37A90B0CFA}.Release|x86.ActiveCfg = Release|x86
+		{D2603EB8-807A-4679-88EB-8A37A90B0CFA}.Release|x86.Build.0 = Release|x86
+		{D2603EB8-807A-4679-88EB-8A37A90B0CFA}.Release|x86.Deploy.0 = Release|x86
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{8BF673D7-C3BA-47DF-B330-047DEFC73418} = {1F244F85-ED5B-4A60-8372-7FB29642ED67}
+		{33ECDA2B-F55E-4186-BAA9-2DEED689044F} = {D5A7EC5A-A34E-4776-AD0B-062D9883DC85}
+		{AEB5E2AE-4ADE-45EA-BB17-3AA73EAFD38D} = {8BF673D7-C3BA-47DF-B330-047DEFC73418}
+		{D2603EB8-807A-4679-88EB-8A37A90B0CFA} = {33ECDA2B-F55E-4186-BAA9-2DEED689044F}
+	EndGlobalSection
+EndGlobal
