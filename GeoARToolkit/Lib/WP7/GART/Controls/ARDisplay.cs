@@ -1013,21 +1013,21 @@ namespace GART.Controls
             VideoSource.RelativeTransform = orientationRotation;
             #endif
 
-#if WIN_RT
+            #if WIN_RT
             VideoRotation orientationRotation = VideoRotation.None;
             switch (newOrientation)
             {
                 case ControlOrientation.Default:
-                    orientationRotation = VideoRotation.Clockwise90Degrees;
+                    orientationRotation = VideoRotation.None;
                     break;
                 case ControlOrientation.Clockwise90Degrees:
-                    orientationRotation = VideoRotation.Clockwise180Degrees;
+                    orientationRotation = VideoRotation.Clockwise90Degrees;
                     break;
                 case ControlOrientation.Clockwise180Degrees:
-                    orientationRotation = VideoRotation.Clockwise270Degrees;
+                    orientationRotation = VideoRotation.Clockwise180Degrees;
                     break;
                 case ControlOrientation.Clockwise270Degrees:
-                    orientationRotation = VideoRotation.None;
+                    orientationRotation = VideoRotation.Clockwise270Degrees;
                     break;
             } // end switch 
 
