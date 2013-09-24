@@ -95,11 +95,22 @@ namespace SimpleAR
 
         void MainPage_Loaded(object sender, RoutedEventArgs e)
         {
-            var t = ARDisplay.StartServices();
+            // OnNavigatedFrom/To does not work if switching between apps, so
+            // have to hook up to the VisibilityChanged event
+            Window.Current.CoreWindow.VisibilityChanged += async (s, a) =>
+                {
+                    if (a.Visible)
+                    {
+                        await ARDisplay.StartServices();
+                    }
+                    else
+                    {
+                        ARDisplay.StopServices();
+                    }
+                };
         }
 
         
-
         /// <summary>
         /// Invoked when this page is about to be displayed in a Frame.
         /// </summary>
@@ -108,13 +119,11 @@ namespace SimpleAR
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             base.OnNavigatedTo(e);
-            // ARDisplay.StartServices();
         }
 
         protected override void OnNavigatedFrom(NavigationEventArgs e)
         {
             base.OnNavigatedFrom(e);
-            ARDisplay.StopServices();
         }
 
         private void MapButton_Click(object sender, RoutedEventArgs e)
